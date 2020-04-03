@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models');
 const webpush = require('web-push');
-
 const redis = require("redis");
 const client = redis.createClient(
   process.env.REDIS_PORT || '6379',
@@ -12,6 +11,8 @@ const client = redis.createClient(
     'return_buffers': true
   });
 const searchRadius = 10; //km
+const proofRouter = require('./proof');
+
 client.on("error", function (error) {
   console.error(error);
 });
@@ -261,4 +262,11 @@ router.get('/ppe/trigger-push', function (req, res, next) {
     });
 })
 */
+
+////////////////////////////////
+// Mounting the API endpoints //
+////////////////////////////////
+
+router.use('/api', proofRouter);
+
 module.exports = router;

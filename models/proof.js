@@ -1,4 +1,5 @@
 'use strict';
+
 const proof_kinds = ['document', 'hyperlink', 'manual'];
 
 module.exports = (sequelize, DataTypes) => {
@@ -28,3 +29,4 @@ module.exports = (sequelize, DataTypes) => {
   };
   return Proof;
 };
+
