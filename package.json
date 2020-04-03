@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "npm run migrate && npm run seed && node ./bin/www",
+    "start:dev": "nodemon ./bin/www | pino-pretty --translateTime='HH:MM:ss'",
     "generateKeys": "node generate-vapid-keys.js",
     "migrate": "npx sequelize db:migrate",
     "seed": "npx sequelize-cli db:seed:all"
@@ -20,7 +21,10 @@
     "express": "~4.16.1",
     "express-formidable": "^1.2.0",
     "express-session": "^1.17.0",
+    "express-pino-logger": "^4.0.0",
+    "express-validator": "^6.4.0",
     "morgan": "~1.9.1",
+    "nanoid": "^3.0.2",
     "pg": "^8.0.0",
     "pg-hstore": "^2.3.3",
     "redis": "^3.0.2",
@@ -31,5 +35,9 @@
   },
   "engines": {
     "node": "12.x.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2",
+    "pino-pretty": "^4.0.0"
   }
 }
