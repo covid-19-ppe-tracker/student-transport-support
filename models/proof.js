@@ -1,6 +1,6 @@
 'use strict';
 
-const proof_kinds = ['document', 'hyperlink', 'manual'];
+const proofKinds = ['document', 'hyperlink', 'manual'];
 
 module.exports = (sequelize, DataTypes) => {
   const Proof = sequelize.define('Proof', {
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     kind: {
       type: DataTypes.ENUM,
-      values: proof_kinds,
+      values: proofKinds,
       allowNull: false,
     },
     uri: {

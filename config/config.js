@@ -7,7 +7,7 @@ module.exports = {
     dialect: 'postgres',
     // Use a different storage. Default: none
     seederStorage: 'sequelize', // or 'sequelize' to store in database
-    gstorage_bucket: 'gs://staging.covid-19-ppe-tracker.appspot.com'
+    gstorage_bucket: 'staging.covid-19-ppe-tracker.appspot.com'
   },
   test: {
     dialect: "sqlite",

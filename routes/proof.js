@@ -11,10 +11,10 @@ var router = express.Router();
 
 /** Makes a URI for document uploads
 */
-function make_uri(proof_kind, uri) {
-  if (proof_kind == "document")
-    return `${config.gstorage_bucket}/foo`;
-  else if (proof_kind == "hyperlink")
+function makeURI(proofKind, uri) {
+  if (proofKind == "document")
+    return `${config.gstorage_bucket}/${nanoid.nanoid()}`;
+  else if (proofKind == "hyperlink")
     return uri;
   else
     return null;
@@ -46,7 +46,7 @@ router.post("/proofs/",
                 const proof = await models.Proof.create({
                   name: req.body.name,
                   kind: req.body.kind,
-                  uri: make_uri(req.body.kind, req.body.uri),
+                  uri: makeURI(req.body.kind, req.body.uri),
                 });
                 res.json(proof);
               } catch (e) {
