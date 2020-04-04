@@ -1,19 +1,19 @@
 'use strict';
 
 var express = require('express');
-var session = require('express-session')
+var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var fs = require('fs');
 var pino = require('express-pino-logger')();
 const webpush = require('web-push');
 var indexRouter = require('./routes/index');
-const AdminBro = require('admin-bro')
-const AdminBroSequelize = require('admin-bro-sequelizejs')
-const AdminBroExpress = require('admin-bro-expressjs')
+const AdminBro = require('admin-bro');
+const AdminBroSequelize = require('admin-bro-sequelizejs');
+const AdminBroExpress = require('admin-bro-expressjs');
 const argon2 = require('argon2');
-AdminBro.registerAdapter(AdminBroSequelize)
-const models = require('./models')
+AdminBro.registerAdapter(AdminBroSequelize);
+const models = require('./models');
 let adminBro = new AdminBro({
     databases: [models],
     rootPath: '/admin',
