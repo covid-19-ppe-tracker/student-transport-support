@@ -59,7 +59,7 @@ const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
         }
         return false
     },
-    cookiePassword: 'some-secret-password-used-to-secure-cookie',
+    cookiePassword: ''+Math.random(),
 })
 
 // const router = AdminBroExpress.buildRouter(adminBro)
@@ -76,7 +76,7 @@ webpush.setVapidDetails(
 );
 var app = express();
 let sess = {
-    secret: 'adasdjlkgjofjslcsadjlvsv',
+    secret: ''+Math.random(),
     resave: false,
     saveUninitialized: true,
     cookie: {}
