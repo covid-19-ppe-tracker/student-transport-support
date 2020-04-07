@@ -157,7 +157,7 @@ router.post('/ppe', function (req, res, next) {
       longitude: req.body.longitude,
     }).then(function (created) {
       // findMatches(created, 'Manufacturing', 'onCreate');
-      res.redirect('ppe-map');
+      res.redirect('/ppe/map');
     });
   }
 
