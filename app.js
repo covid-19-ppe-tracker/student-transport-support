@@ -6,14 +6,19 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var fs = require('fs');
 var pino = require('express-pino-logger')();
-const webpush = require('web-push');
 var indexRouter = require('./routes/index');
+const webpush = require('web-push');
 const AdminBro = require('admin-bro');
 const AdminBroSequelize = require('admin-bro-sequelizejs');
 const AdminBroExpress = require('admin-bro-expressjs');
 const argon2 = require('argon2');
-AdminBro.registerAdapter(AdminBroSequelize);
 const models = require('./models');
+AdminBro.registerAdapter(AdminBroSequelize);
+
+const generateSecret = function(){
+  return ''+Math.random()+Math.random()+Math.random();
+}
+
 let adminBro = new AdminBro({
     databases: [models],
     rootPath: '/admin',
@@ -61,7 +66,7 @@ const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
         }
         return false;
     },
-    cookiePassword: 'some-secret-password-used-to-secure-cookie',
+    cookiePassword: generateSecret(),
 })
 
 // const router = AdminBroExpress.buildRouter(adminBro)
@@ -78,7 +83,7 @@ webpush.setVapidDetails(
 );
 var app = express();
 let sess = {
-    secret: 'adasdjlkgjofjslcsadjlvsv',
+    secret: generateSecret(),
     resave: false,
     saveUninitialized: true,
     cookie: {}

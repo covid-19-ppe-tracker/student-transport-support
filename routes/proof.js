@@ -56,21 +56,21 @@ const validate = validations => {
 
 // Create a proof document
 router.post("/proofs/",
-            upload.single('document'),
-            validate([check("name").not().isEmpty(),
-                      check("kind").isIn(models.Proof.rawAttributes.kind.values),
-                      check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, {req}) => { return req.body.kind == "hyperlink";}).exists().isURL()
-                     ]),
-            async function (req, res, next) {
-              try {
-                const proof = await models.Proof.create({
-                  name: req.body.name,
-                  kind: req.body.kind,
-                  uri: makeURI(req.body.kind, req.body.uri, req.file),
-                });
-                res.json(proof);
-              } catch (e) {
-                next(e);
-              }
-            });
+  upload.single('document'),
+  validate([check("name").not().isEmpty(),
+  check("kind").isIn(models.Proof.rawAttributes.kind.values),
+  check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, { req }) => { return req.body.kind == "hyperlink"; }).exists().isURL()
+  ]),
+  async function (req, res, next) {
+    try {
+      const proof = await models.Proof.create({
+        name: req.body.name,
+        kind: req.body.kind,
+        uri: makeURI(req.body.kind, req.body.uri, req.file),
+      });
+      res.json(proof);
+    } catch (e) {
+      next(e);
+    }
+  });
 module.exports = router;
