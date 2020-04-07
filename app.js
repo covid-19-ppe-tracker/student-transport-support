@@ -33,15 +33,15 @@ let adminBro = new AdminBro({
                 new: {
                     before: async (request) => {
                         if (request.payload.password) {
-                            request.payload.password = await argon2.hash(request.payload.password)
+                            request.payload.password = await argon2.hash(request.payload.password);
                         }
-                        return request
+                        return request;
                     },
                 }
             }
         }
     }],
-})
+});
 
 const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
     authenticate: async (email, password) => {
@@ -50,14 +50,14 @@ const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
                 email,
                 role:'admin'
             }
-         })
+        });
         if (user) {
-            const matched = await argon2.verify(user.dataValues.password, password)
+            const matched = await argon2.verify(user.dataValues.password, password);
             if (matched) {
-                return user
+                return user;
             }
         }
-        return false
+        return false;
     },
     cookiePassword: 'some-secret-password-used-to-secure-cookie',
 })
@@ -83,12 +83,12 @@ let sess = {
 }
 
 if (app.get('env') === 'production') {
-    app.set('trust proxy', 1) 
-    sess.cookie.secure = true
+  app.set('trust proxy', 1) ;
+  sess.cookie.secure = true;
 }
 
-app.use(session(sess))
-app.use(adminBro.options.rootPath, router)
+app.use(session(sess));
+app.use(adminBro.options.rootPath, router);
 app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
