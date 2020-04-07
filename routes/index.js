@@ -155,6 +155,7 @@ router.post('/ppe', function (req, res, next) {
       contact: req.body.contact,
       latitude: req.body.latitude,
       longitude: req.body.longitude,
+      remarks: req.body.remarks,
     }).then(function (created) {
       // findMatches(created, 'Manufacturing', 'onCreate');
       res.redirect('/ppe/map');
