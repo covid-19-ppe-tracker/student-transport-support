@@ -43,8 +43,8 @@
                                     <select class="form-control" id="PPETypeId" name="PPETypeId">
                                         <% PPETypes.forEach(function(PPEType) { %>
 
-                                            <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
-                                            <% }); %>
+                                        <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
+                                        <% }); %>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -108,6 +108,19 @@
                                     <label for="contact">Contact</label>
                                     <input class="form-control" id="contact" type="text" name="contact" required>
                                 </div>
+                                <label for="">Shall we match you with manufacturers to purchase PPE from?</label>
+                                <div class="form-group">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="canBuy" id="canBuyYes"
+                                            value=1>
+                                        <label class="form-check-label" for="canBuyYes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="canBuy" id="canBuyNo"
+                                            value=0>
+                                        <label class="form-check-label" for="canBuyNo">No</label>
+                                    </div>
+                                </div>
                                 <input class="form-control" id="latitude" type="hidden" name="latitude" required>
                                 <input class="form-control" id="longitude" type="hidden" name="longitude" required>
                                 <!-- <div class="form-group">
@@ -132,8 +145,8 @@
                                     <select class="form-control" id="PPETypeId" name="PPETypeId">
                                         <% PPETypes.forEach(function(PPEType) { %>
 
-                                            <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
-                                            <% }); %>
+                                        <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
+                                        <% }); %>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -155,7 +168,8 @@
                                 <input class="form-control" id="latitude" type="hidden" name="latitude" required>
                                 <input class="form-control" id="longitude" type="hidden" name="longitude" required>
                                 <div class="form-group">
-                                    <label for="remarks">Enter any remarks (for e.g. where all you can deliver, time to delivery, etc.)</label>
+                                    <label for="remarks">Enter any remarks (for e.g. where all you can deliver, time to
+                                        delivery, etc.)</label>
                                     <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
                                 </div>
                                 <!-- <div class="form-group">

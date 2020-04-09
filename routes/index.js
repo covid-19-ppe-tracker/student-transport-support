@@ -141,6 +141,7 @@ router.post('/ppe', function (req, res, next) {
       contact: req.body.contact,
       latitude: req.body.latitude,
       longitude: req.body.longitude,
+      canBuy: req.body.canBuy
     }).then(function (created) {
       findMatches(created, 'Requirement', 'onCreate');
       res.render('ppe-thanks', { forId: created.id, forType: 'Requirement' });
