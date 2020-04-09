@@ -29,7 +29,8 @@ function makeURI(proofKind, uri, file) {
  */
 const upload = multer({
   storage: multerGoogleStorage.storageEngine({
-    filename: (_req, file, cb) => { cb(null, `proofs/${nanoid(14)}-${file.originalname}`); }
+    acl:{},
+    filename: (_req, file, cb) => { cb(null, `/proofs/${nanoid(14)}-${file.originalname}`); }
   }),
   fileFilter: (req, _file, cb) => {
     if (req.body.kind == 'document')
