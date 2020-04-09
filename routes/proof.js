@@ -14,10 +14,10 @@ const { check, validationResult } = require("express-validator");
 
 /** Makes a URI for document uploads
  */
-function makeURI(proofKind, uri, file) {
-  if (proofKind == "document")
+function makeURI(documentKind, uri, file) {
+  if (documentKind == "file")
     return file.filename;
-  else if (proofKind == "hyperlink")
+  else if (documentKind == "hyperlink")
     return uri;
   else
     return null;
@@ -33,7 +33,7 @@ const upload = multer({
     filename: (_req, file, cb) => { cb(null, `/proofs/${nanoid(14)}-${file.originalname}`); }
   }),
   fileFilter: (req, _file, cb) => {
-    if (req.body.kind == 'document')
+    if (req.body.kind == 'file')
       cb(null, true);
     else
       cb(null, false);
@@ -59,12 +59,12 @@ const validate = validations => {
 router.post("/proofs/",
   upload.single('document'),
   validate([check("name").not().isEmpty(),
-  check("kind").isIn(models.Proof.rawAttributes.kind.values),
+  check("kind").isIn(models.Document.rawAttributes.kind.values),
   check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, { req }) => { return req.body.kind == "hyperlink"; }).exists().isURL()
   ]),
   async function (req, res, next) {
     try {
-      const proof = await models.Proof.create({
+      const proof = await models.Document.create({
         name: req.body.name,
         kind: req.body.kind,
         uri: makeURI(req.body.kind, req.body.uri, req.file),

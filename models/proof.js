@@ -1,19 +1,12 @@
 'use strict';
 
-const proofKinds = ['document', 'hyperlink', 'manual'];
+const documentKinds = ['file', 'hyperlink', 'manual'];
 
 module.exports = (sequelize, DataTypes) => {
-  const Proof = sequelize.define('Proof', {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true
-      }
-    },
+  const Document = sequelize.define('Document', {
     kind: {
       type: DataTypes.ENUM,
-      values: proofKinds,
+      values: documentKinds,
       allowNull: false,
     },
     uri: {
@@ -21,12 +14,10 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       allowNull: true,
     }
-  }, {
-    tableName: 'proofs'
   });
-  Proof.associate = function(models) {
+  Document.associate = function(models) {
     // associations can be defined here
   };
-  return Proof;
+  return Document;
 };
 
