@@ -152,11 +152,13 @@ router.post('/ppe',
         return res.render('ppe-thanks', { forId: availability.id, forType: 'Availability' });
       }
       else if (req.body.mode === 'requirement') {
+        record.canBuy = req.body.canBuy;
         const requirement = await models.Requirement.create(record);
         findMatches(requirement, 'Requirement', 'onCreate');
         return res.render('ppe-thanks', { forId: requirement.id, forType: 'Requirement' });
       }
       else if (req.body.mode === 'manufacturing') {
+        record.remarks = req.body.remarks;
         const manufacturing = await models.Manufacturing.create(record);
         return res.redirect('/ppe/map');
       }
