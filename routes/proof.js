@@ -12,11 +12,12 @@ const router = express.Router();
 const multerGoogleStorage = require("multer-google-storage");
 const { check, validationResult } = require("express-validator");
 
+const gcs_uri_root = 'https://storage.cloud.google.com/documents.ppecovid.in'
 /** Makes a URI for document uploads
  */
 function makeURI(documentKind, uri, file) {
   if (documentKind == "file")
-    return file.filename;
+    return gcs_uri_root + file.filename;
   else if (documentKind == "hyperlink")
     return uri;
   else
@@ -29,7 +30,7 @@ function makeURI(documentKind, uri, file) {
  */
 const upload = multer({
   storage: multerGoogleStorage.storageEngine({
-    acl:{},
+    acl: {},
     filename: (_req, file, cb) => { cb(null, `/proofs/${nanoid(14)}-${file.originalname}`); }
   }),
   fileFilter: (req, _file, cb) => {
@@ -57,15 +58,16 @@ const validate = validations => {
 
 // Create a proof document
 router.post("/proofs/",
-  upload.single('document'),
-  validate([check("name").not().isEmpty(),
-  check("kind").isIn(models.Document.rawAttributes.kind.values),
-  check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, { req }) => { return req.body.kind == "hyperlink"; }).exists().isURL()
+  upload.single('file'),
+  validate([
+    // check("name").not().isEmpty(),
+    check("kind").isIn(models.Document.rawAttributes.kind.values),
+    check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, { req }) => { return req.body.kind == "hyperlink"; }).exists().isURL()
   ]),
   async function (req, res, next) {
     try {
       const proof = await models.Document.create({
-        name: req.body.name,
+        // name: req.body.name,
         kind: req.body.kind,
         uri: makeURI(req.body.kind, req.body.uri, req.file),
       });
