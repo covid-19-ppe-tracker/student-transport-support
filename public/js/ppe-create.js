@@ -27,14 +27,14 @@ $( "input[name=mode]" ).on( "change", function() {
 $( "input[name=kind]" ).on( "change", function() {
 	const mode = $( this ).attr("id");
   switch (mode) {
-  case "document":
+  case "file":
     $("#proof_kind_label").text("Upload");
     $("#hyperlink_evidence").removeAttr("required").prop("hidden", true);;
-    $("#document_evidence").prop("required", true).prop("hidden", false);
+    $("#file_evidence").prop("required", true).prop("hidden", false);
     break;
   case "hyperlink":
     $("#proof_kind_label").text("URL");
-    $("#document_evidence").removeAttr("required").prop("hidden", true);
+    $("#file_evidence").removeAttr("required").prop("hidden", true);
     $("#hyperlink_evidence").prop("required", true).prop("hidden", false);
     break;
   }
