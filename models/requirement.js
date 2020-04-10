@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
       }
     });
+    Requirement.belongsTo(models.Proof, {
+      onDelete: "SET NULL",
+      foreignKey: {
+        allowNull: true
+      }
+    });
   };
   return Requirement;
 };

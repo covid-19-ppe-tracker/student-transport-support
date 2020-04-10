@@ -14,8 +14,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     }
   });
-  Document.associate = function(models) {
+  Document.associate = function (models) {
     // associations can be defined here
+    Document.belongsTo(models.Proof, {
+      onDelete: "CASCADE",
+      foreignKey: {
+        allowNull: false
+      }
+    });
   };
   return Document;
 };
