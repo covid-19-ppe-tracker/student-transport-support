@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     contact: DataTypes.STRING,
     latitude: DataTypes.DOUBLE,
-    longitude: DataTypes.DOUBLE
+    longitude: DataTypes.DOUBLE,
+    canBuy: DataTypes.BOOLEAN
   }, {});
   Requirement.associate = function(models) {
     // associations can be defined here
