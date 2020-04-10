@@ -12,7 +12,6 @@ const client = redis.createClient(
     'return_buffers': true
   });
 const searchRadius = 10; //km
-const proofRouter = require('./proof');
 const { check } = require("express-validator");
 const env = process.env.NODE_ENV || "development";
 
@@ -264,10 +263,5 @@ router.get('/ppe/trigger-push', function (req, res, next) {
 })
 */
 
-////////////////////////////////
-// Mounting the API endpoints //
-////////////////////////////////
-
-router.use('/api', proofRouter);
 
 module.exports = router;
