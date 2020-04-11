@@ -32,15 +32,12 @@ router.get('/map', function (req, res, next) {
 });
 // View ppe as list
 router.get('/list', async function (req, res, next) {
-  try {
-    const availabilities = await models.Availability.findAll({ include: models.PPEType });
-    const requirements = await models.Requirement.findAll({ include: models.PPEType });
-    const manufacturings = await models.Manufacturing.findAll({ include: models.PPEType });
-    res.render('ppe-list', { availabilities: availabilities, requirements: requirements, manufacturing: manufacturings });
-  }
-  catch (e) {
-    next(e)
-  }
+  ap = models.Availability.findAll({ include: models.PPEType });
+  rp = models.Requirement.findAll({ include: models.PPEType });
+  mp = models.Manufacturing.findAll({ include: models.PPEType });
+  Promise.all([ap, rp, mp]).then(function (response) {
+    res.render('ppe-list', { availabilities: response[0], requirements: response[1], manufacturing: response[2] });
+  }).catch(e => next(e));
 });
 
 // View ppe-create form
