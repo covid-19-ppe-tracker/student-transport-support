@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
+const { upload, validate, makeURI } = require('./utils');
 const webpush = require('web-push');
-
 const redis = require("redis");
 const client = redis.createClient(
   process.env.REDIS_PORT || '6379',
@@ -12,6 +12,9 @@ const client = redis.createClient(
     'return_buffers': true
   });
 const searchRadius = 10; //km
+const { check } = require("express-validator");
+const env = process.env.NODE_ENV || "development";
+
 client.on("error", function (error) {
   console.error(error);
 });
@@ -55,13 +58,13 @@ router.get('/ppe/create', function (req, res, next) {
 router.get('/contact-us', function (req, res, next) {
   res.render('contact-us');
 });
-router.post('/suggestion', function(req, res, next){
+router.post('/suggestion', function (req, res, next) {
   models.Suggestion.create({
     text: req.body.suggestion
   })
-  .then(function(created){
-    res.render('contact-us', {alert: true});
-  })
+    .then(function (created) {
+      res.render('contact-us', { alert: true });
+    })
 })
 // Get list of availabilities
 router.get('/availability', function (req, res, next) {
@@ -117,52 +120,52 @@ function findMatches(newPost, newPostType, mode) {
   });
 }
 // Create ppe
-router.post('/ppe', function (req, res, next) {
-  if (req.body.mode === 'availability') {
-    models.Availability.create({
-      name: req.body.name,
-      PPETypeId: req.body.PPETypeId,
-      quantity: req.body.quantity,
-      email: req.body.email,
-      contact: req.body.contact,
-      latitude: req.body.latitude,
-      longitude: req.body.longitude,
-    }).then(function (created) {
-      findMatches(created, 'Availability', 'onCreate');
-      res.render('ppe-thanks', { forId: created.id, forType: 'Availability' });
-    });
-  }
-  else if (req.body.mode === 'requirement') {
-    models.Requirement.create({
-      name: req.body.name,
-      PPETypeId: req.body.PPETypeId,
-      quantity: req.body.quantity,
-      email: req.body.email,
-      contact: req.body.contact,
-      latitude: req.body.latitude,
-      longitude: req.body.longitude,
-    }).then(function (created) {
-      findMatches(created, 'Requirement', 'onCreate');
-      res.render('ppe-thanks', { forId: created.id, forType: 'Requirement' });
-    });
-  }
-  else if (req.body.mode === 'manufacturing') {
-    models.Manufacturing.create({
-      name: req.body.name,
-      PPETypeId: req.body.PPETypeId,
-      quantity: req.body.quantity,
-      email: req.body.email,
-      contact: req.body.contact,
-      latitude: req.body.latitude,
-      longitude: req.body.longitude,
-    }).then(function (created) {
-      // findMatches(created, 'Manufacturing', 'onCreate');
-      res.redirect('/ppe/map');
-    });
-  }
-
-
-})
+router.post('/ppe',
+  upload.single('file'),
+  validate([
+    // check("name").not().isEmpty(),
+    check("kind").isIn(models.Document.rawAttributes.kind.values),
+    check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, { req }) => { return req.body.kind == "hyperlink"; }).exists().isURL()
+  ]),
+  async function (req, res, next) {
+    
+    try {
+      const proof = await models.Proof.create();
+      const document = await models.Document.create({
+        kind: req.body.kind,
+        uri: makeURI(req.body.kind, req.body.uri, req.file),
+        ProofId: proof.id
+      });
+      let record = {
+        name: req.body.name,
+        PPETypeId: req.body.PPETypeId,
+        quantity: req.body.quantity,
+        email: req.body.email,
+        contact: req.body.contact,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+        ProofId: proof.id
+      }
+      if (req.body.mode === 'availability') {
+        const availability = await models.Availability.create(record);
+        findMatches(availability, 'Availability', 'onCreate');
+        return res.render('ppe-thanks', { forId: availability.id, forType: 'Availability' });
+      }
+      else if (req.body.mode === 'requirement') {
+        record.canBuy = req.body.canBuy;
+        const requirement = await models.Requirement.create(record);
+        findMatches(requirement, 'Requirement', 'onCreate');
+        return res.render('ppe-thanks', { forId: requirement.id, forType: 'Requirement' });
+      }
+      else if (req.body.mode === 'manufacturing') {
+        record.remarks = req.body.remarks;
+        const manufacturing = await models.Manufacturing.create(record);
+        return res.redirect('/ppe/map');
+      }
+    } catch (e) {
+      next(e);
+    }
+  });
 
 // router.get('/ppe/thanks', function (req, res, next) {
 //   res.render('ppe-thanks');
@@ -261,4 +264,6 @@ router.get('/ppe/trigger-push', function (req, res, next) {
     });
 })
 */
+
+
 module.exports = router;

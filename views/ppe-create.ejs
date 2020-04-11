@@ -1,193 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <%- include('partials/head') %>
-        <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
-    </head>
 
-    <body class=" bg-gradient">
-        <%- include('partials/navbar') %>
+<head>
+    <%- include('partials/head') %>
+    <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
+</head>
 
-        <div class="container">
-            <div class="row justify-content-md-center mt-5">
-                <div class="col-md-6 card pt-2 pb-2 ml-3 mr-3 mb-3 shadow rounded">
-                    <h2 class="text-center">Submit request</h2>
-                    <form method="POST" action="/ppe">
-			<div class="btn-group btn-group-toggle col pl-0 pr-0 pt-2 pb-4" data-toggle="buttons">
-                            <label class="btn btn-outline-success active">
-				<input type="radio" name="mode" id="availability" value="availability" checked> Availability
-                            </label>
-                            <label class="btn btn-outline-danger">
-				<input type="radio" name="mode" id="requirement" value="requirement"> Requirement
-                            </label>
-                            <label class="btn btn-outline-primary">
-				<input type="radio" name="mode" id="manufacturing" value="manufacturing"> Manufacturing
-                            </label>
-			</div>
+<body class=" bg-gradient">
+    <%- include('partials/navbar') %>
 
-                        <fieldset id="ppe_info_set">
-                            <legend>
-                                <span>You'd like to share</span>
-                                <i class="em em-gift_heart" aria-role="presentation"></i>
-                                <small class="text-muted">
-                                </small>
-                            </legend>
+    <div class="container">
+        <div class="row justify-content-md-center mt-5">
+            <div class="col-md-6 card pt-2 pb-2 ml-3 mr-3 mb-3 shadow rounded">
+                <h2 class="text-center">Submit request</h2>
+                <form method="POST" action="/ppe" enctype="multipart/form-data">
+                    <div class="btn-group btn-group-toggle col pl-0 pr-0 pt-2 pb-4" data-toggle="buttons">
+                        <label class="btn btn-outline-success active">
+                            <input type="radio" name="mode" id="availability" value="availability" checked> Availability
+                        </label>
+                        <label class="btn btn-outline-danger">
+                            <input type="radio" name="mode" id="requirement" value="requirement"> Requirement
+                        </label>
+                        <label class="btn btn-outline-primary">
+                            <input type="radio" name="mode" id="manufacturing" value="manufacturing"> Manufacturing
+                        </label>
+                    </div>
 
-                            <div class="form-group">
-                                <select class="form-control" id="PPETypeId" name="PPETypeId">
-                                    <% PPETypes.forEach(function(PPEType) { %>
+                    <fieldset id="ppe_info_set">
+                        <legend>
+                            <span>You'd like to share</span>
+                            <i class="em em-gift_heart" aria-role="presentation"></i>
+                            <small class="text-muted">
+                            </small>
+                        </legend>
 
-                                    <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
-                                    <% }); %>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="quantity">Quantity</label>
-                                <input class="form-control" id="quantity" type="number" name="quantity" min="1" required>
-                            </div>
-                        </fieldset>
-                        
-                        <hr>
-                        <fieldset>
-                            <legend>
-                                <span>At this location</span>
-                                <small class="text-muted">choose by clicking on the map</small>
-                            </legend>
-                            <div id="mapid" class="choose-location"></div>
-                        </fieldset>
-                        <hr>
+                        <div class="form-group">
+                            <select class="form-control" id="PPETypeId" name="PPETypeId">
+                                <% PPETypes.forEach(function(PPEType) { %>
 
-                        <fieldset>
-                            <legend>
-                                <span>Your contact details</span>
-                                <i class="em em-mega" aria-role="presentation"></i>
-                            </legend>
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i id="name_emoji" class="em em-angel" aria-role="presentation"></i>
-                                        </span>
-                                    </div>
-                                    <input class="form-control" id="name" type="text" name="name" required>
+                                <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input class="form-control" id="quantity" type="number" name="quantity" min="1" required>
+                        </div>
+                    </fieldset>
+
+                    <hr>
+                    <fieldset>
+                        <legend>
+                            <span>At this location</span>
+                            <small class="text-muted">choose by clicking on the map</small>
+                        </legend>
+                        <div id="mapid" class="choose-location"></div>
+                    </fieldset>
+                    <hr>
+
+                    <fieldset>
+                        <legend>
+                            <span>Your contact details</span>
+                            <i class="em em-mega" aria-role="presentation"></i>
+                        </legend>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i id="name_emoji" class="em em-angel" aria-role="presentation"></i>
+                                    </span>
                                 </div>
+                                <input class="form-control" id="name" type="text" name="name" required>
                             </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="em em-e-mail" aria-role="presentation"></i>
-                                        </span>
-                                    </div>    
-                                    <input class="form-control" id="email" type="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="em em-e-mail" aria-role="presentation"></i>
+                                    </span>
                                 </div>
+                                <input class="form-control" id="email" type="email" name="email" required>
                             </div>
-                            <div class="form-group">
-                                <label for="contact">Phone</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="em em-calling" aria-role="presentation"></i>
-                                        </span>
-					<span class="input-group-text">+91</span>
-                                    </div>    
-                                    <input class="form-control" id="contact" type="tel" name="contact" required minlength="10" maxlength="10" pattern="\d+">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Phone</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="em em-calling" aria-role="presentation"></i>
+                                    </span>
+                                    <span class="input-group-text">+91</span>
                                 </div>
+                                <input class="form-control" id="contact" type="tel" name="contact" required
+                                    minlength="10" maxlength="10" pattern="\d+">
                             </div>
-                        </fieldset>
+                        </div>
+                    </fieldset>
+                    <div class="form-group d-none" id="can_buy_group">
+                        <label for="can_buy_group">Please mention whether you are ready to purchase PPE, in case donations
+                            are not available</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="canBuy" id="canBuyYes" value=1 disabled>
+                            <label class="form-check-label" for="canBuyYes">Yes, I'm willing to
+                                purchase</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="canBuy" id="canBuyNo" value=0 disabled>
+                            <label class="form-check-label" for="canBuyNo">No, I want donations only</label>
+                        </div>
+                    </div>
+                    <div class="form-group d-none" id="remarks_group">
+                        <label for="remarks">Enter any remarks (for e.g. where all you can deliver, time to
+                            delivery, etc.)</label>
+                        <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
+                    </div>
+                    <fieldset>
+                        <legend>
+                            <span>Help us build trust!</span>
+                            <i class="em em-handshake" aria-role="presentation"></i>
+                        </legend>
 
-                        <fieldset>
-                            <legend>
-                                <span>Help us build trust!</span>
-                                <i class="em em-handshake" aria-role="presentation"></i>
-                            </legend>
+                        <div>
+                            <p>We'd like to verify your request, please
+                                help us by uploading a document, like</p>
+                            <ul>
+                                <li>relevant to the request from your organisation/institute</li>
+                                <li>photograph of items (or lack thereof)</li>
+                            </ul>
+                            <p>or a link to a relevant announcement or
+                                social media page, like</p>
+                            <ul>
+                                <li>official website of your organisation/institute</li>
+                                <li>blog post, twitter, facebook, other social media</li>
+                            </ul>
+                            <p>that can legitimise your request.</p>
+                        </div>
+                        <div class="btn-group btn-group-toggle col pl-0 pr-0" data-toggle="buttons">
+                            <label class="btn btn-outline-dark active">
+                                <input type="radio" name="kind" id="file" value="file" checked> File
+                            </label>
+                            <label class="btn btn-outline-dark">
+                                <input type="radio" name="kind" id="hyperlink" value="hyperlink"> Hyperlink
+                            </label>
+                        </div>
+                        <div class="form-group pt-4">
+                            <label id="proof_kind_label">Upload</label>
+                            <input class="form-control-file" id="file_evidence" type="file" name="file" required>
+                            <input class="form-control col" id="hyperlink_evidence" type="url" name="uri" hidden>
+                        </div>
+                    </fieldset>
 
-			    <div>
-				<p>We'd like to verify your request, please
-				    help us by uploading a document, like</p>
-				<ul>
-				    <li>relevant to the request from your organisation/institute</li>
-				    <li>photograph of items (or lack thereof)</li>
-				</ul>
-				<p>or a link to a relevant announcement or
-				    social media page, like</p>
-				<ul>
-				    <li>official website of your organisation/institute</li>
-				    <li>blog post, twitter, facebook, other social media</li>
-				</ul>
-				<p>that can legitimise your request.</p>
-			    </div>
-			    <div class="btn-group btn-group-toggle col pl-0 pr-0" data-toggle="buttons">
-			    	<label class="btn btn-outline-dark active">
-			    	    <input type="radio" name="kind" id="document" value="document" checked> Document
-			    	</label>
-			    	<label class="btn btn-outline-dark">
-			    	    <input type="radio" name="kind" id="hyperlink" value="hyperlink"> Hyperlink
-			    	</label>
-			    </div>
-                            <div class="form-group pt-4">
-                                <label id="proof_kind_label">Upload</label>
-			    	<input class="form-control-file" id="document_evidence" type="file" name="document" required>
-			    	<input class="form-control col" id="hyperlink_evidence" type="url" name="hyperlink" hidden>
-			    </div>
-			</fieldset>
-			
-                        <input class="form-control" id="latitude" type="hidden" name="latitude" required>
-                        <input class="form-control" id="longitude" type="hidden" name="longitude" required>
+                    <input class="form-control" id="latitude" type="hidden" name="latitude" required>
+                    <input class="form-control" id="longitude" type="hidden" name="longitude" required>
 
-                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
-                    </form>
-		</div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </form>
             </div>
-	</div>
-	<script>
-	    let myMap;
-	    let marker;
+        </div>
+    </div>
+    <script>
+        let myMap;
+        let marker;
 
-	    function getLocation(callback) {
-		if (navigator.geolocation) {
-		    navigator.geolocation.getCurrentPosition(callback);
-		} else {
-		    x.innerHTML = "Geolocation is not supported by this browser.";
-		}
-	    }
+        function getLocation(callback) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(callback);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
 
-	    function onMapClick(e) {
-		console.log(e)
-		var position = e.latlng;
-		marker.setLatLng(new L.LatLng(position.lat, position.lng));
-		mymap.panTo(new L.LatLng(position.lat, position.lng))
-		updateFormLocation(position.lat, position.lng)
-	    };
+        function onMapClick(e) {
+            console.log(e)
+            var position = e.latlng;
+            marker.setLatLng(new L.LatLng(position.lat, position.lng));
+            mymap.panTo(new L.LatLng(position.lat, position.lng))
+            updateFormLocation(position.lat, position.lng)
+        };
 
-	    function updateFormLocation(lat, lng) {
-		$('input[name=latitude]').val(lat)
-		$('input[name=longitude]').val(lng)
-	    }
-	    function displayMap(position) {
-		mymap = L.map('mapid').setView([position.coords.latitude, position.coords.longitude], 15);
-		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2hpbmphbiIsImEiOiJjazhiMHM2bzQwN2oyM2tvM3d3cm81dmxsIn0.cVV5b0Ey8lIQ2DcsJ5ZDmA', {
-		    maxZoom: 18,
-		    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-		    id: 'mapbox/streets-v11',
-		    tileSize: 512,
-		    zoomOffset: -1
-		}).addTo(mymap);
-		marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(mymap);
-		mymap.on('click', onMapClick);
-		updateFormLocation(position.coords.latitude, position.coords.longitude)
-	    }
+        function updateFormLocation(lat, lng) {
+            $('input[name=latitude]').val(lat)
+            $('input[name=longitude]').val(lng)
+        }
+        function displayMap(position) {
+            mymap = L.map('mapid').setView([position.coords.latitude, position.coords.longitude], 15);
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2hpbmphbiIsImEiOiJjazhiMHM2bzQwN2oyM2tvM3d3cm81dmxsIn0.cVV5b0Ey8lIQ2DcsJ5ZDmA', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(mymap);
+            marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(mymap);
+            mymap.on('click', onMapClick);
+            updateFormLocation(position.coords.latitude, position.coords.longitude)
+        }
 
 
-	    $(function () {
-		getLocation(displayMap)
-	    });
-	    </script>
+        $(function () {
+            getLocation(displayMap)
+        });
+    </script>
 
-	<script src="/js/ppe-create.js" async></script>
-    </body>
+    <script src="/js/ppe-create.js" async></script>
+</body>
+
 </html>

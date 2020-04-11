@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
       }
     });
+    Availability.belongsTo(models.Proof, {
+      onDelete: "SET NULL",
+      foreignKey: {
+        allowNull: true
+      }
+    });
   };
   return Availability;
 };

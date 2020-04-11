@@ -1,17 +1,24 @@
+'use strict';
+
 var express = require('express');
-var session = require('express-session')
+var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var fs = require('fs');
-var logger = require('morgan');
-const webpush = require('web-push');
+var pino = require('express-pino-logger')();
 var indexRouter = require('./routes/index');
-const AdminBro = require('admin-bro')
-const AdminBroSequelize = require('admin-bro-sequelizejs')
-const AdminBroExpress = require('admin-bro-expressjs')
+const webpush = require('web-push');
+const AdminBro = require('admin-bro');
+const AdminBroSequelize = require('admin-bro-sequelizejs');
+const AdminBroExpress = require('admin-bro-expressjs');
 const argon2 = require('argon2');
-AdminBro.registerAdapter(AdminBroSequelize)
-const models = require('./models')
+const models = require('./models');
+AdminBro.registerAdapter(AdminBroSequelize);
+
+const generateSecret = function(){
+  return ''+Math.random()+Math.random()+Math.random();
+}
+
 let adminBro = new AdminBro({
     databases: [models],
     rootPath: '/admin',
@@ -59,7 +66,7 @@ const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
         }
         return false;
     },
-    cookiePassword: 'some-secret-password-used-to-secure-cookie',
+    cookiePassword: generateSecret(),
 })
 
 // const router = AdminBroExpress.buildRouter(adminBro)
@@ -76,7 +83,7 @@ webpush.setVapidDetails(
 );
 var app = express();
 let sess = {
-    secret: 'adasdjlkgjofjslcsadjlvsv',
+    secret: generateSecret(),
     resave: false,
     saveUninitialized: true,
     cookie: {}
@@ -90,7 +97,7 @@ if (app.get('env') === 'production') {
 app.use(session(sess));
 app.use(adminBro.options.rootPath, router);
 app.set('view engine', 'ejs');
-app.use(logger('dev'));
+app.use(pino);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

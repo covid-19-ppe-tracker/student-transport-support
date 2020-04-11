@@ -73,3 +73,4 @@ typings/
 public/config.js
 keys.json
 app.yaml
+covid-19-ppe-tracker-*.json
