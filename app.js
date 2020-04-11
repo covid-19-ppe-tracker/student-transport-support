@@ -15,6 +15,7 @@ const models = require('./models');
 
 // Routes
 var indexRouter = require('./routes/index');
+var ppeRouter = require('./routes/ppe');
 var apiRouter = require('./routes/api');
 
 AdminBro.registerAdapter(AdminBroSequelize);
@@ -106,6 +107,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/ppe', ppeRouter);
 app.use('/api', apiRouter);
 app.use('/', indexRouter);
 
