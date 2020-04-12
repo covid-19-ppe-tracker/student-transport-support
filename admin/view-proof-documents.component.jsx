@@ -1,11 +1,11 @@
 import React from 'react'
 import { Box } from 'admin-bro'
 
-const Dashboard = (props) => {
+const Panel = (props) => {
     console.log('props', props);
     return (
         <Box>
-            <Documents docs={props.record.params.documents} />
+            <Documents documents={props.record.populated.documents} />
         </Box>
     )
 }
@@ -21,9 +21,9 @@ class Document extends React.Component {
 class Documents extends React.Component {
     generateLinks() {
         let container = [];
-        for (let d of this.props.docs) {
+        for (let d of this.props.documents) {
             container.push(
-                <Document key={d.id} document={d} />
+                <Document key={d.params.id} document={d.params} />
             )
         }
         return container;
@@ -37,4 +37,4 @@ class Documents extends React.Component {
     }
 }
 
-export default Dashboard
+export default Panel

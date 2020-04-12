@@ -16,8 +16,7 @@ const models = require('./models');
 AdminBro.registerAdapter(AdminBroSequelize);
 
 const generateSecret = function () {
-  // return '' + Math.random() + Math.random() + Math.random();
-  return 'hello'
+  return '' + Math.random() + Math.random() + Math.random();
 }
 
 let adminBro = new AdminBro({
@@ -60,12 +59,17 @@ let adminBro = new AdminBro({
           isAccessible: true,
           handler: async (req, res, context) => {
             let proof = context.record;
+            const DocumentResource = context._admin.findResource('Documents')
             const docs = await models.Document.findAll({ where: { ProofId: proof.params.id } });
-            proof.params.documents = docs;
-            console.log(proof);
+            const documentRecords = await DocumentResource.findMany(docs.map(it => it.id));
+            proof.populate('documents', {
+              records: documentRecords,
+              toJSON: function() {
+                return this.records.map(it => it.toJSON());
+              }
+            });
             return {
-              record: await proof.toJSON()
-
+              record: proof.toJSON()
             }
           },
           component: AdminBro.bundle('./admin/view-proof-documents.component.jsx'),
