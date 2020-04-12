@@ -3,6 +3,9 @@ import { Box } from 'admin-bro'
 
 const Panel = (props) => {
     console.log('props', props);
+    if(props.record.populated.documents === undefined){
+        window.location.reload(false);
+    }
     return (
         <Box>
             <Documents documents={props.record.populated.documents} />
