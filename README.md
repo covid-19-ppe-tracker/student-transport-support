@@ -42,6 +42,14 @@ Live project link: https://covid-19-ppe-tracker.appspot.com/
    ask the browser to trust this domain as secure. Note that this will not work
    in production and you will have to configure a secure domain.
 
+## Deployment
+1. We are using adminBro for the admin panel which bundles custom user components
+   into a file (`.adminbro/bundle.js`) at runtime. If the deployment service 
+   doesn't allow writing to the file system, then custom components will not
+   be loaded. So adminBro provides a convenience script to run before 
+   deployment that bundles all components. 
+   Generate it by executing `npm run bundle`.
+   
 ## Contributing
 Our DB schema is being maintained [here][dbschema].
 
