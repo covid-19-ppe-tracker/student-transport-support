@@ -8,8 +8,8 @@ var fs = require('fs');
 var pino = require('express-pino-logger')();
 const webpush = require('web-push');
 const AdminBro = require('admin-bro');
-const AdminBroSequelize = require('admin-bro-sequelizejs');
 const AdminBroExpress = require('admin-bro-expressjs');
+const adminBroOptions = require('./admin/config');
 const argon2 = require('argon2');
 const models = require('./models');
 
@@ -20,82 +20,53 @@ var apiRouter = require('./routes/api');
 
 AdminBro.registerAdapter(AdminBroSequelize);
 
-const generateSecret = function(){
-  return ''+Math.random()+Math.random()+Math.random();
+
+const generateSecret = function () {
+  return '' + Math.random() + Math.random() + Math.random();
 }
 
-let adminBro = new AdminBro({
-    databases: [models],
-    rootPath: '/admin',
-    branding: {
-        companyName: 'COVID-19 PPE Tracker'
-    },
-    resources: [{
-        resource: models.User,
-        options: {
-            properties: {
-                password: {
-                    type: 'string',
-                    isVisible: {
-                        list: false, edit: true, filter: false, show: false,
-                    }
-                },
-            },
-            actions: {
-                new: {
-                    before: async (request) => {
-                        if (request.payload.password) {
-                            request.payload.password = await argon2.hash(request.payload.password);
-                        }
-                        return request;
-                    },
-                }
-            }
-        }
-    }],
-});
+let adminBro = new AdminBro(adminBroOptions);
 
 const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
-    authenticate: async (email, password) => {
-        const user = await models.User.findOne({ 
-            where: {
-                email,
-                role:'admin'
-            }
-        });
-        if (user) {
-            const matched = await argon2.verify(user.dataValues.password, password);
-            if (matched) {
-                return user;
-            }
-        }
-        return false;
-    },
-    cookiePassword: generateSecret(),
+  authenticate: async (email, password) => {
+    const user = await models.User.findOne({
+      where: {
+        email,
+        role: 'admin'
+      }
+    });
+    if (user) {
+      const matched = await argon2.verify(user.dataValues.password, password);
+      if (matched) {
+        return user;
+      }
+    }
+    return false;
+  },
+  cookiePassword: generateSecret(),
 })
 
-// const router = AdminBroExpress.buildRouter(adminBro)
 
 const vapidKeys = {
-    publicKey: fs.readFileSync("./server.pub").toString(),
-    privateKey: fs.readFileSync('./server.priv').toString()
+  publicKey: fs.readFileSync("./server.pub").toString(),
+  privateKey: fs.readFileSync('./server.priv').toString()
 };
 
 webpush.setVapidDetails(
-    'mailto:web-push-book@gauntface.com',
-    vapidKeys.publicKey,
-    vapidKeys.privateKey
+  'mailto:web-push-book@gauntface.com',
+  vapidKeys.publicKey,
+  vapidKeys.privateKey
 );
 var app = express();
 let sess = {
-    secret: generateSecret(),
-    resave: false,
-    saveUninitialized: true,
-    cookie: {}
+  secret: generateSecret(),
+  resave: false,
+  saveUninitialized: true,
+  cookie: {}
 }
 
 if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) ;
+  app.set('trust proxy', 1);
   sess.cookie.secure = true;
 }
 
