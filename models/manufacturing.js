@@ -25,6 +25,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
       }
     });
+    Manufacturing.belongsTo(models.User, {
+      onDelete: "SET NULL",
+      foreignKey: {
+        allowNull: true
+      }
+    });
   };
   return Manufacturing;
 };

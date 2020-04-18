@@ -25,6 +25,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
       }
     });
+    Requirement.belongsTo(models.User, {
+      onDelete: "SET NULL",
+      foreignKey: {
+        allowNull: true
+      }
+    });
   };
   return Requirement;
 };
