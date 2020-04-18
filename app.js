@@ -18,9 +18,6 @@ var indexRouter = require('./routes/index');
 var ppeRouter = require('./routes/ppe');
 var apiRouter = require('./routes/api');
 
-AdminBro.registerAdapter(AdminBroSequelize);
-
-
 const generateSecret = function () {
   return '' + Math.random() + Math.random() + Math.random();
 }
