@@ -6,13 +6,19 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var fs = require('fs');
 var pino = require('express-pino-logger')();
-var indexRouter = require('./routes/index');
 const webpush = require('web-push');
 const AdminBro = require('admin-bro');
 const AdminBroExpress = require('admin-bro-expressjs');
 const adminBroOptions = require('./admin/config');
 const argon2 = require('argon2');
 const models = require('./models');
+
+// Routes
+var indexRouter = require('./routes/index');
+var ppeRouter = require('./routes/ppe');
+var apiRouter = require('./routes/api');
+
+AdminBro.registerAdapter(AdminBroSequelize);
 
 
 const generateSecret = function () {
@@ -72,6 +78,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/ppe', ppeRouter);
+app.use('/api', apiRouter);
 app.use('/', indexRouter);
 
 module.exports = app;
