@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var models = require('../models');
+const request = require('request')
+const { check } = require("express-validator");
 const { upload, validate, makeURI } = require('./utils');
 const webpush = require('web-push');
 const redis = require("redis");
+const INCOMING_WEBHOOK=process.env.INCOMING_WEBHOOK
+var models = require('../models');
 const client = redis.createClient(
   process.env.REDIS_PORT || '6379',
   process.env.REDIS_HOST || '127.0.0.1',
@@ -12,7 +15,6 @@ const client = redis.createClient(
     'return_buffers': true
   });
 const searchRadius = 10; //km
-const { check } = require("express-validator");
 
 client.on("error", function (error) {
   console.error(error);
@@ -82,6 +84,22 @@ router.post('/',
         longitude: req.body.longitude,
         ProofId: proof.id
       }
+      request.post(
+        INCOMING_WEBHOOK,
+        {
+          json: {
+            text: `A new ${req.body.mode} was generated`
+          }
+        },
+        (error, res, body) => {
+          if (error) {
+            console.error(error)
+            return
+          }
+          console.log(`statusCode: ${res.statusCode}`)
+          console.log(body)
+        }
+      )
       if (req.body.mode === 'availability') {
         const availability = await models.Availability.create(record);
         findMatches(availability, 'Availability', 'onCreate');
