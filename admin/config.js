@@ -60,6 +60,14 @@ module.exports = {
           },
           component: AdminBro.bundle('./view-proof-documents.component.jsx'),
         },
+        edit: {
+          before: async (req) => {
+            if (!req.payload.verified) {
+              req.payload.verified = false;
+            }
+            return req;
+          }
+        }
       },
     },
   },
