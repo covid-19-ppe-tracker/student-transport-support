@@ -107,3 +107,10 @@ a {
   font-family: 'Times New Roman', Times, serif;
   font-size: 0.8rem;
 }
+
+aside.remove-record{
+  width:25px;
+  height:20px;
+  min-width: 0;
+  padding:0
+}

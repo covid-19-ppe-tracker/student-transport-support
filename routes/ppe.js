@@ -72,7 +72,6 @@ router.post('/',
     check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, { req }) => { return req.body.kind == "hyperlink"; }).exists().isURL()
   ]),
   async function (req, res, next) {
-
     try {
       let transporter = await require('../config/mailer')
       const proof = await models.Proof.create();
@@ -114,17 +113,21 @@ router.post('/',
       });
 
       console.log("USER: " + user.id)
-      let record = {
-        name: req.body.name,
-        PPETypeId: req.body.PPETypeId,
-        quantity: req.body.quantity,
-        email: req.body.email,
-        contact: req.body.contact,
-        latitude: req.body.latitude,
-        longitude: req.body.longitude,
-        ProofId: proof.id,
-        UserId: user.id
+      let records = [];
+      for(var i = 0; i <req.body.PPETypeId.length; i++){
+        records.push({
+          name: req.body.name,
+          PPETypeId: req.body.PPETypeId[i],
+          quantity: req.body.quantity[i],
+          email: req.body.email,
+          contact: req.body.contact,
+          latitude: req.body.latitude,
+          longitude: req.body.longitude,
+          ProofId: proof.id,
+          UserId: user.id
+        })
       }
+      
       request.post(
         INCOMING_WEBHOOK,
         {
@@ -142,21 +145,26 @@ router.post('/',
         }
       )
       if (req.body.mode === 'availability') {
-        const availability = await models.Availability.create(record);
-        findMatches(availability, 'Availability', 'onCreate');
+        const availability = await models.Availability.bulkCreate(records);
+        // findMatches(availability, 'Availability', 'onCreate');
         return res.render('ppe-thanks', { forId: availability.id, forType: 'Availability', statusLink: statusLink });
       }
       else if (req.body.mode === 'requirement') {
-        record.canBuy = req.body.canBuy;
-        const requirement = await models.Requirement.create(record);
-        findMatches(requirement, 'Requirement', 'onCreate');
+        // record.canBuy = req.body.canBuy;
+        for(let r of records){
+          r.canBuy = req.body.canBuy;
+        }
+        const requirement = await models.Requirement.bulkCreate(records);
+        // findMatches(requirement, 'Requirement', 'onCreate');
         return res.render('ppe-thanks', { forId: requirement.id, forType: 'Requirement', statusLink: statusLink });
       }
       else if (req.body.mode === 'manufacturing') {
-        record.remarks = req.body.remarks;
-        const manufacturing = await models.Manufacturing.create(record);
+        // record.remarks = req.body.remarks;
+        for(let r of records){
+          r.remarks = req.body.remarks;
+        }
+        const manufacturing = await models.Manufacturing.bulkCreate(records);
         return res.render('ppe-thanks', { forId: manufacturing.id, forType: 'Manufacturing', statusLink: statusLink });
-        // return res.redirect('/ppe/map');
       }
     } catch (e) {
       next(e);
