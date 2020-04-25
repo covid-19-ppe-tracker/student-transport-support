@@ -6,12 +6,13 @@ const webpush = require('web-push');
 const cryptoRandomString = require('crypto-random-string');
 const redis = require("redis");
 const argon2 = require('argon2');
+const nodemailer = require("nodemailer");
 // App
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
 // Configs
-const INCOMING_WEBHOOK=process.env.INCOMING_WEBHOOK
+const INCOMING_WEBHOOK = process.env.INCOMING_WEBHOOK
 const client = redis.createClient(
   process.env.REDIS_PORT || '6379',
   process.env.REDIS_HOST || '127.0.0.1',
@@ -73,6 +74,7 @@ router.post('/',
   async function (req, res, next) {
 
     try {
+      let transporter = await require('../config/mailer')
       const proof = await models.Proof.create();
       const document = await models.Document.create({
         kind: req.body.kind,
@@ -88,10 +90,30 @@ router.post('/',
           password: await argon2.hash(req.body.name),
           createdAt: new Date(),
           updatedAt: new Date(),
-          token: cryptoRandomString({length: 50, type: 'url-safe'})
+          token: cryptoRandomString({ length: 50, type: 'url-safe' })
         }
       });
-      console.log("USER: "+user.id)
+      // send mail with defined transport object
+      const statusLink = `${process.env.BASE_URL || 'http://localhost:3000/'}user/${user.token}`;
+      let info = transporter.sendMail({
+        from: process.env.EMAIL_SENDER || 'PPE Tracker', // sender address
+        to: user.email, // list of receivers
+        subject: "Your PPE Application", // Subject line
+        text: `Your application was registered successfully. Please open this link to view your application status: ${statusLink}`, // plain text body
+        html: `
+          <h1>Your application was registered successfully</h1>
+          <p>Please click on this link to view your application status</p>
+          <a href="${statusLink}" target="_blank">${statusLink}</a>
+          `
+      }).then(()=>{
+        console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...  
+      });
+
+      console.log("USER: " + user.id)
       let record = {
         name: req.body.name,
         PPETypeId: req.body.PPETypeId,
