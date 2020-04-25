@@ -144,18 +144,19 @@ router.post('/',
       if (req.body.mode === 'availability') {
         const availability = await models.Availability.create(record);
         findMatches(availability, 'Availability', 'onCreate');
-        return res.render('ppe-thanks', { forId: availability.id, forType: 'Availability' });
+        return res.render('ppe-thanks', { forId: availability.id, forType: 'Availability', statusLink: statusLink });
       }
       else if (req.body.mode === 'requirement') {
         record.canBuy = req.body.canBuy;
         const requirement = await models.Requirement.create(record);
         findMatches(requirement, 'Requirement', 'onCreate');
-        return res.render('ppe-thanks', { forId: requirement.id, forType: 'Requirement' });
+        return res.render('ppe-thanks', { forId: requirement.id, forType: 'Requirement', statusLink: statusLink });
       }
       else if (req.body.mode === 'manufacturing') {
         record.remarks = req.body.remarks;
         const manufacturing = await models.Manufacturing.create(record);
-        return res.redirect('/ppe/map');
+        return res.render('ppe-thanks', { forId: manufacturing.id, forType: 'Manufacturing', statusLink: statusLink });
+        // return res.redirect('/ppe/map');
       }
     } catch (e) {
       next(e);
