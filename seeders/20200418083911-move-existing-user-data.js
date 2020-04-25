@@ -1,6 +1,7 @@
 'use strict';
 const models = require('../models');
 const argon2 = require('argon2');
+const cryptoRandomString = require('crypto-random-string');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -19,7 +20,8 @@ module.exports = {
               contact: item.contact,
               password: await argon2.hash(item.name),
               createdAt: new Date(),
-              updatedAt: new Date()
+              updatedAt: new Date(),
+              token: cryptoRandomString({length: 50, type: 'url-safe'})
             }
           });
 
