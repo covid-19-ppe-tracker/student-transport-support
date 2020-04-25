@@ -1,12 +1,17 @@
-var express = require('express');
-var router = express.Router();
+// Dependencies
 const request = require('request')
 const { check } = require("express-validator");
 const { upload, validate, makeURI } = require('./utils');
 const webpush = require('web-push');
+const cryptoRandomString = require('crypto-random-string');
 const redis = require("redis");
-const INCOMING_WEBHOOK=process.env.INCOMING_WEBHOOK
+const argon2 = require('argon2');
+// App
+var express = require('express');
+var router = express.Router();
 var models = require('../models');
+// Configs
+const INCOMING_WEBHOOK=process.env.INCOMING_WEBHOOK
 const client = redis.createClient(
   process.env.REDIS_PORT || '6379',
   process.env.REDIS_HOST || '127.0.0.1',
@@ -74,6 +79,19 @@ router.post('/',
         uri: makeURI(req.body.kind, req.body.uri, req.file),
         ProofId: proof.id
       });
+      const [user, created] = await models.User.findOrCreate({
+        where: { email: req.body.email },
+        defaults: {
+          username: req.body.name,
+          role: 'Applicant',
+          contact: req.body.contact,
+          password: await argon2.hash(req.body.name),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          token: cryptoRandomString({length: 50, type: 'url-safe'})
+        }
+      });
+      console.log("USER: "+user.id)
       let record = {
         name: req.body.name,
         PPETypeId: req.body.PPETypeId,
@@ -82,7 +100,8 @@ router.post('/',
         contact: req.body.contact,
         latitude: req.body.latitude,
         longitude: req.body.longitude,
-        ProofId: proof.id
+        ProofId: proof.id,
+        UserId: user.id
       }
       request.post(
         INCOMING_WEBHOOK,
