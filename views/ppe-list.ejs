@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
     <%- include('partials/head') %>
-  </head>
+</head>
+
 <body class=" bg-gradient">
 
     <%- include('partials/navbar') %>
@@ -17,16 +18,21 @@
             <div class="col-sm-10 text-center ">
                 <div class="card shadow p-1 mb-2 bg-white rounded">
                     <div class="card-body">
-                        <p class="card-text">The availability and requirement status of all PPEs are shown in a list here. Click on the red +
-                            button to
-                            register a new status or the grey map button to view this information in a map. Click on each item
-                            to view more information like contact and location.</p>
+                        <p class="card-text">The availability and requirement status of all PPEs are shown in a list
+                            here.
+                        </p>
+                        <p> Click on the map-marker icon
+                            <button class="text-light btn btn-info btn-sm d-inline " disabled>
+                                <span class="fa fa-map-marker"></span>
+                            </button>&nbsp;
+                            to view the item's location.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 p-1">
                 <div class="card">
                     <div class="card-header bg-success">
                         <h5 class="mb-0 text-white">PPE donations</h5>
@@ -37,93 +43,73 @@
 
                     <div class="card">
                         <div class="card-header" id="heading-av-<%= av.id %>">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" data-toggle="collapse"
-                                    data-target="#collapse-av-<%= av.id %>" aria-expanded="true"
-                                    aria-controls="collapse-av-<%= av.id %>">
-                                    <b><%= av.quantity %> <%= av.PPEType.name %>s </b> available with <%= av.name %>
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="collapse-av-<%= av.id %>" class="collapse" aria-labelledby="heading-av-<%= av.id %>"
-                            data-parent="#accordion">
-                            <div class="card-body">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            <p class="text-left p-0 m-0">
+                                <small><%= av.createdAt.toDateString() %></small>
+                                <button type="button" class="btn btn-info btn-sm float-right" data-toggle="modal"
                                     data-target="#locationModal" data-lat="<%= av.latitude %>"
-                                    data-lng="<%= av.longitude %>">Location</button>
-                            </div>
+                                    data-lng="<%= av.longitude %>">
+                                    <span class="fa fa-map-marker"></span>
+                                </button>
+                            </p>
+                            <b><%= av.quantity %> <%= av.PPEType.name %>s </b> can be donated by
+                            <%= av.User ? av.User.username : 'unknown' %>
+
                         </div>
                     </div>
                     <% }); %>
 
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 p-1">
                 <div class="card">
                     <div class="card-header bg-danger">
                         <h5 class="mb-0 text-white">Requirements</h5>
                     </div>
                 </div>
-                <div id="accordion">
+                <div>
                     <% requirements.forEach(function(req) { %>
 
                     <div class="card">
                         <div class="card-header" id="heading-req-<%= req.id %>">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" data-toggle="collapse"
-                                    data-target="#collapse-req-<%= req.id %>" aria-expanded="true"
-                                    aria-controls="collapse-req-<%= req.id %>">
-                                    <b><%= req.quantity %> <%= req.PPEType.name %>s </b> required by <%= req.name %>
-
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="collapse-req-<%= req.id %>" class="collapse"
-                            aria-labelledby="heading-req-<%= req.id %>" data-parent="#accordion">
-                            <div class="card-body">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            <p class="text-left p-0 m-0">
+                                <small><%= req.createdAt.toDateString() %></small>
+                                <button type="button" class="btn btn-info btn-sm float-right" data-toggle="modal"
                                     data-target="#locationModal" data-lat="<%= req.latitude %>"
-                                    data-lng="<%= req.longitude %>">Location</button>
+                                    data-lng="<%= req.longitude %>">
+                                    <span class="fa fa-map-marker"></span>
+                                </button>
+                            </p>
+                            <b><%= req.quantity %> <%= req.PPEType.name %>s </b> required by
+                            <%= req.User ? req.User.username : 'unknown' %>
 
-                            </div>
                         </div>
                     </div>
                     <% }); %>
 
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 p-1">
                 <div class="card">
                     <div class="card-header bg-primary">
                         <h5 class="mb-0 text-white">Manufacturing/Suppliers</h5>
                     </div>
                 </div>
-                <div id="accordion">
+                <div>
                     <% manufacturing.forEach(function(man) { %>
 
                     <div class="card">
                         <div class="card-header" id="heading-man-<%= man.id %>">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" data-toggle="collapse"
-                                    data-target="#collapse-man-<%= man.id %>" aria-expanded="true"
-                                    aria-controls="collapse-man-<%= man.id %>">
-                                    <b><%= man.quantity %> <%= man.PPEType.name %>s </b> can be manufactured by
-                                    <%= man.name %>
-
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="collapse-man-<%= man.id %>" class="collapse"
-                            aria-labelledby="heading-man-<%= man.id %>" data-parent="#accordion">
-                            <div class="card-body">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                            <p class="text-left p-0 m-0">
+                                <small><%= man.createdAt.toDateString() %></small>
+                                <button type="button" class="btn btn-info btn-sm float-right" data-toggle="modal"
                                     data-target="#locationModal" data-lat="<%= man.latitude %>"
-                                    data-lng="<%= man.longitude %>">Location</button>
+                                    data-lng="<%= man.longitude %>">
+                                    <span class="fa fa-map-marker"></span>
+                                </button>
+                            </p>
+                            <b><%= man.quantity %> <%= man.PPEType.name %>s </b> can be manufactured by
+                            <%= man.User ? man.User.username : 'unknown' %>
 
-                            </div>
                         </div>
                     </div>
                     <% }); %>
