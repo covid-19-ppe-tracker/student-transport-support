@@ -1,9 +1,9 @@
 module.exports = {
   development: {
-    username: 'trackppe',
-    password: 'trackppe',
-    database: 'trackppe',
-    host: 'localhost',
+    username: process.env.DB_USERNAME || 'trackppe',
+    password: process.env.DB_PASSWORD || 'trackppe',
+    database: process.env.DB_NAME || 'trackppe',
+    host: process.env.DB_HOST || 'localhost',
     dialect: 'postgres',
     // Use a different storage. Default: none
     seederStorage: 'sequelize', // or 'sequelize' to store in database

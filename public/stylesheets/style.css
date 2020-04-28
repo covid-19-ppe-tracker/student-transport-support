@@ -93,3 +93,24 @@ a {
 .navbar-toggler{
   padding:0.25rem;
 }
+
+.legend{
+  /* position:fixed; */
+  z-index: 499;
+  /* top:70px; */
+  /* left:5px; */
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.8rem;
+}
+
+.legend-text{
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.8rem;
+}
+
+aside.remove-record{
+  width:25px;
+  height:20px;
+  min-width: 0;
+  padding:0
+}

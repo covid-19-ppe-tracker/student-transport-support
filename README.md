@@ -11,6 +11,13 @@ Live project link: https://covid-19-ppe-tracker.appspot.com/
    variables in development, via the .env file. Anything entered in .env will be loaded 
    as an environment variable in development mode. In production, we're relying on the 
    deployment-engine's environment resolution mechanism.
+   - Default database credentials are in `config/config.js`. Please do not modify this 
+   file. If you need to override the credentials, simply insert the environment variables
+   `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`, `DB_HOST` into the .env file.
+   - Default mailer configuration is in `config/mailer.js`. If no `EMAIL_HOST` environment
+   variable is provided, it will automatically create an [Ethereal](https://ethereal.email/)
+   account to be used as a fake smtp server. For sending proper mails, please provide the
+   `EMAIL` environment variables as shown in `.env.example`.
 2. We're using Google Cloud Storage for document storage.
    Download the Google Application credential (JSON) file from a Service Account in
    [here](https://console.cloud.google.com/apis/credentials?project=covid-19-ppe-tracker).

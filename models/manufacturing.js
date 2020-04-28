@@ -7,7 +7,9 @@ module.exports = (sequelize, DataTypes) => {
     contact: DataTypes.STRING,
     latitude: DataTypes.DOUBLE,
     longitude: DataTypes.DOUBLE,
-    remarks: DataTypes.TEXT
+    remarks: DataTypes.TEXT,
+    resolved: DataTypes.BOOLEAN,
+    connected: DataTypes.BOOLEAN,
   }, {});
   Manufacturing.associate = function (models) {
     // associations can be defined here
@@ -18,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     });
     Manufacturing.belongsTo(models.Proof, {
+      onDelete: "SET NULL",
+      foreignKey: {
+        allowNull: true
+      }
+    });
+    Manufacturing.belongsTo(models.User, {
       onDelete: "SET NULL",
       foreignKey: {
         allowNull: true

@@ -6,7 +6,7 @@ var models = require('../models');
 router.get('/availability', async function (req, res, next) {
   try {
     const availabilities = await models.Availability.findAll(
-      { attributes: ['name', 'quantity', 'latitude', 'longitude'], include: models.PPEType }
+      { attributes: ['name', 'quantity', 'latitude', 'longitude', 'resolved', 'connected'], include: models.PPEType }
     );
     res.send(availabilities);
   } catch (e) {
@@ -17,7 +17,7 @@ router.get('/availability', async function (req, res, next) {
 router.get('/requirement', async function (req, res, next) {
   try {
     const requirements = await models.Requirement.findAll(
-      { attributes: ['name', 'quantity', 'latitude', 'longitude'], include: models.PPEType }
+      { attributes: ['name', 'quantity', 'latitude', 'longitude', 'resolved', 'connected'], include: models.PPEType }
     );
     res.send(requirements);
   } catch (e) {

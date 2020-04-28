@@ -1,6 +1,7 @@
 const models = require('../models');
 const AdminBro = require('admin-bro');
 const AdminBroSequelize = require('admin-bro-sequelizejs');
+const argon2 = require('argon2');
 
 AdminBro.registerAdapter(AdminBroSequelize);
 
@@ -49,7 +50,7 @@ module.exports = {
             const documentRecords = await DocumentResource.findMany(docs.map(it => it.id));
             proof.populate('documents', {
               records: documentRecords,
-              toJSON: function() {
+              toJSON: function () {
                 return this.records.map(it => it.toJSON());
               }
             });
@@ -59,8 +60,75 @@ module.exports = {
           },
           component: AdminBro.bundle('./view-proof-documents.component.jsx'),
         },
+        edit: {
+          before: async (req) => {
+            if (!req.payload.verified) {
+              req.payload.verified = false;
+            }
+            return req;
+          }
+        }
       },
     },
-  }
+  },
+  {
+    resource: models.Availability,
+    options: {
+      actions: {
+        edit: {
+          before: async (req) => {
+            if (!req.payload.connected) {
+              req.payload.connected = false;
+            }
+            if (!req.payload.resolved) {
+              req.payload.resolved = false;
+            }
+            return req;
+          }
+        }
+      }
+    }
+  },
+  {
+    resource: models.Requirement,
+    options: {
+      actions: {
+        edit: {
+          before: async (req) => {
+            if (!req.payload.canBuy) {
+              req.payload.canBuy = false;
+            }
+            if (!req.payload.connected) {
+              req.payload.connected = false;
+            }
+            if (!req.payload.resolved) {
+              req.payload.resolved = false;
+            }
+            return req;
+          }
+        }
+      }
+    }
+  },
+  {
+    resource: models.Manufacturing,
+    options: {
+      actions: {
+        edit: {
+          before: async (req) => {
+            if (!req.payload.connected) {
+              req.payload.connected = false;
+            }
+            if (!req.payload.resolved) {
+              req.payload.resolved = false;
+            }
+            return req;
+          }
+        }
+      }
+    }
+  },
+
+
   ],
 }

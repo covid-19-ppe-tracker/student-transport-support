@@ -11,7 +11,6 @@ services:
       - '6379:6379'
 
   postgres:
-    container_name: 'ppe_postgres_db'      
     image: 'postgres:12-alpine'
     volumes:
       - 'ppe_local_db:/var/lib/postgresql/data'

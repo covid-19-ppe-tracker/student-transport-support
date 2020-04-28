@@ -14,19 +14,19 @@
             <div class="col-md-6 card pt-2 pb-2 ml-3 mr-3 mb-3 shadow rounded">
                 <h2 class="text-center">Submit request</h2>
                 <form method="POST" action="/ppe" enctype="multipart/form-data">
-                    <div class="btn-group btn-group-toggle col pl-0 pr-0 pt-2 pb-4" data-toggle="buttons">
+                    <div class="btn-group flex-wrap btn-group-toggle col pl-0 pr-0 pt-2 pb-4" data-toggle="buttons">
                         <label class="btn btn-outline-success active">
-                            <input type="radio" name="mode" id="availability" value="availability" checked> Availability
+                            <input type="radio" name="mode" id="availability" value="Availability" checked> PPE Donations
                         </label>
                         <label class="btn btn-outline-danger">
-                            <input type="radio" name="mode" id="requirement" value="requirement"> Requirement
+                            <input type="radio" name="mode" id="requirement" value="Requirement"> Requirements
                         </label>
                         <label class="btn btn-outline-primary">
-                            <input type="radio" name="mode" id="manufacturing" value="manufacturing"> Manufacturing
+                            <input type="radio" name="mode" id="manufacturing" value="Manufacturing"> Manufacturing/Suppliers
                         </label>
                     </div>
 
-                    <fieldset id="ppe_info_set">
+                    <fieldset id="ppe-info-set">
                         <legend>
                             <span>You'd like to share</span>
                             <i class="em em-gift_heart" aria-role="presentation"></i>
@@ -34,19 +34,23 @@
                             </small>
                         </legend>
 
-                        <div class="form-group">
-                            <select class="form-control" id="PPETypeId" name="PPETypeId">
-                                <% PPETypes.forEach(function(PPEType) { %>
-
-                                <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
-                                <% }); %>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity">Quantity</label>
-                            <input class="form-control" id="quantity" type="number" name="quantity" min="1" required>
+                        <div class="row card-header" id="record">
+                            <div class="form-group col-lg-6">
+                                <label for="PPETypeId">Type of PPE</label>
+                                <select class="form-control" id="PPETypeId" name="PPETypeId[]">
+                                    <% PPETypes.forEach(function(PPEType) { %>
+    
+                                    <option value="<%- PPEType.id%>"><%- PPEType.name%></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="form-group col-lg-5">
+                                <label for="quantity">Quantity</label>
+                                <input class="form-control" id="quantity" type="text" name="quantity[]" >
+                            </div>
                         </div>
                     </fieldset>
+                    <a class="btn btn-primary text-light" id="add-another">Add another</a>
 
                     <hr>
                     <fieldset>
@@ -103,12 +107,12 @@
                         <label for="can_buy_group">Please mention whether you are ready to purchase PPE, in case donations
                             are not available</label>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="canBuy" id="canBuyYes" value=1 disabled>
+                            <input class="form-check-input" type="radio" name="canBuy" id="canBuyYes" value=1 disabled required>
                             <label class="form-check-label" for="canBuyYes">Yes, I'm willing to
                                 purchase</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="canBuy" id="canBuyNo" value=0 disabled>
+                            <input class="form-check-input" type="radio" name="canBuy" id="canBuyNo" value=0 disabled required>
                             <label class="form-check-label" for="canBuyNo">No, I want donations only</label>
                         </div>
                     </div>
@@ -207,7 +211,7 @@
         });
     </script>
 
-    <script src="/js/ppe-create.js" async></script>
+    <script src="/javascripts/ppe-create.js" async></script>
 </body>
 
 </html>

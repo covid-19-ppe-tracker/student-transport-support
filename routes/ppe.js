@@ -1,9 +1,18 @@
+// Dependencies
+const request = require('request')
+const { check } = require("express-validator");
+const { upload, validate, makeURI } = require('./utils');
+const webpush = require('web-push');
+const nanoid = require('nanoid').nanoid;
+const redis = require("redis");
+const argon2 = require('argon2');
+const nodemailer = require("nodemailer");
+// App
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
-const { upload, validate, makeURI } = require('./utils');
-const webpush = require('web-push');
-const redis = require("redis");
+// Configs
+const INCOMING_WEBHOOK = process.env.INCOMING_WEBHOOK
 const client = redis.createClient(
   process.env.REDIS_PORT || '6379',
   process.env.REDIS_HOST || '127.0.0.1',
@@ -12,7 +21,6 @@ const client = redis.createClient(
     'return_buffers': true
   });
 const searchRadius = 10; //km
-const { check } = require("express-validator");
 
 client.on("error", function (error) {
   console.error(error);
@@ -32,9 +40,9 @@ router.get('/map', function (req, res, next) {
 });
 // View ppe as list
 router.get('/list', async function (req, res, next) {
-  ap = models.Availability.findAll({ include: models.PPEType });
-  rp = models.Requirement.findAll({ include: models.PPEType });
-  mp = models.Manufacturing.findAll({ include: models.PPEType });
+  ap = models.Availability.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
+  rp = models.Requirement.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
+  mp = models.Manufacturing.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
   Promise.all([ap, rp, mp]).then(function (response) {
     res.render('ppe-list', { availabilities: response[0], requirements: response[1], manufacturing: response[2] });
   }).catch(e => next(e));
@@ -64,40 +72,101 @@ router.post('/',
     check("uri", "hyperlink 'uri' must be present and conform to a URL").if((value, { req }) => { return req.body.kind == "hyperlink"; }).exists().isURL()
   ]),
   async function (req, res, next) {
-
     try {
+      let transporter = await require('../config/mailer')
       const proof = await models.Proof.create();
       const document = await models.Document.create({
         kind: req.body.kind,
         uri: makeURI(req.body.kind, req.body.uri, req.file),
         ProofId: proof.id
       });
-      let record = {
-        name: req.body.name,
-        PPETypeId: req.body.PPETypeId,
-        quantity: req.body.quantity,
-        email: req.body.email,
-        contact: req.body.contact,
-        latitude: req.body.latitude,
-        longitude: req.body.longitude,
-        ProofId: proof.id
+      const [user, created] = await models.User.findOrCreate({
+        where: { email: req.body.email },
+        defaults: {
+          username: req.body.name,
+          role: 'Applicant',
+          contact: req.body.contact,
+          password: await argon2.hash(req.body.name),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          token: nanoid(50)
+        }
+      });
+      // send mail with defined transport object
+      const statusLink = `${process.env.BASE_URL || 'http://localhost:3000/'}user/${user.token}`;
+      let info = transporter.sendMail({
+        from: process.env.EMAIL_SENDER || 'PPE Tracker', // sender address
+        to: user.email, // list of receivers
+        subject: "Your PPE Application", // Subject line
+        text: `Your application was registered successfully. Please open this link to view your application status: ${statusLink}`, // plain text body
+        html: `
+          <h1>Your application was registered successfully</h1>
+          <p>Please click on this link to view your application status</p>
+          <a href="${statusLink}" target="_blank">${statusLink}</a>
+          `
+      }).then(() => {
+        console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...  
+      });
+
+      console.log("USER: " + user.id)
+      let records = [];
+      for (var i = 0; i < req.body.PPETypeId.length; i++) {
+        records.push({
+          name: req.body.name,
+          PPETypeId: req.body.PPETypeId[i],
+          quantity: req.body.quantity[i],
+          email: req.body.email,
+          contact: req.body.contact,
+          latitude: req.body.latitude,
+          longitude: req.body.longitude,
+          ProofId: proof.id,
+          UserId: user.id
+        })
       }
-      if (req.body.mode === 'availability') {
-        const availability = await models.Availability.create(record);
-        findMatches(availability, 'Availability', 'onCreate');
-        return res.render('ppe-thanks', { forId: availability.id, forType: 'Availability' });
-      }
-      else if (req.body.mode === 'requirement') {
-        record.canBuy = req.body.canBuy;
-        const requirement = await models.Requirement.create(record);
-        findMatches(requirement, 'Requirement', 'onCreate');
-        return res.render('ppe-thanks', { forId: requirement.id, forType: 'Requirement' });
-      }
-      else if (req.body.mode === 'manufacturing') {
-        record.remarks = req.body.remarks;
-        const manufacturing = await models.Manufacturing.create(record);
-        return res.redirect('/ppe/map');
-      }
+
+      request.post(
+        INCOMING_WEBHOOK,
+        {
+          json: {
+            text: `A new ${req.body.mode} was generated`
+          }
+        },
+        (error, res, body) => {
+          if (error) {
+            console.error(error)
+            return
+          }
+          console.log(`statusCode: ${res.statusCode}`)
+          console.log(body)
+        }
+      )
+      let createdRecords;
+      switch (req.body.mode) {
+        case 'Availability': {
+          createdRecords = await models.Availability.bulkCreate(records);
+          break;
+        }
+        case 'Requirement': {
+          for (let r of records) {
+            r.canBuy = req.body.canBuy;
+          }
+          createdRecords = await models.Requirement.bulkCreate(records);
+          break;
+        }
+        case 'Manufacturing': {
+          for (let r of records) {
+            r.remarks = req.body.remarks;
+          }
+          createdRecords = await models.Manufacturing.bulkCreate(records);
+          break;
+        }
+      }          
+      // findMatches(requirement, 'Requirement', 'onCreate');
+      return res.render('ppe-thanks', { forId: createdRecords[0].id, forType: req.body.mode, statusLink });
     } catch (e) {
       next(e);
     }

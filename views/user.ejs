@@ -8,59 +8,64 @@
 <body class=" bg-gradient">
 
     <%- include('partials/navbar') %>
+    <% 
+        function getStatus(item){
+            if(item.resolved){return "resolved"; } 
+            else if(item.connected){return "connected"; }
+            else if(item.Proof.verified){return "verified"; }
+            else {return "pending verification"; }
+        }
+        function getBadgeClass(item){
+            if(item.resolved){return "success";} 
+            else if(item.connected){ return "info";}
+            else if(item.Proof.verified){ return "primary";}
+            else { return "warning";}
+        }
+    %>
     <!-- <div class="fab-container">
         <a type="button" class="btn btn-danger btn-fab" href="/ppe/create">
             <span class="fa fa-plus"></span>
         </a>
     </div> -->
     <div class="container pt-2">
-        <div class="row w-100 justify-content-sm-center">
-            <div class="col-sm-10 text-center ">
-                <div class="card shadow p-1 mb-2 bg-white rounded">
-                    <div class="card-body">
-                        <p class="card-text">The availability and requirement status of all PPEs are shown in a list
-                            here.
-                        </p>
-                        <p> Click on the map-marker icon
-                            <button class="text-light btn btn-info btn-sm d-inline " disabled>
-                                <span class="fa fa-map-marker"></span>
-                            </button>&nbsp;
-                            to view the item's location.
-                        </p>
-                    </div>
+        <div class="row">
+            <div class="card shadow p-1 m-2 bg-white rounded col-sm-12">
+                <div class="card-header">
+                    <h2><%=user.username%></h2>
+                    <h5><%= user.email  %> </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">All of your applications are listed here along with their current status.</p>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4 p-1">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header bg-success">
                         <h5 class="mb-0 text-white">PPE donations</h5>
                     </div>
                 </div>
-                <div id="accordion">
+                <div>
                     <% availabilities.forEach(function(av) { %>
 
                     <div class="card">
                         <div class="card-header" id="heading-av-<%= av.id %>">
-                            <p class="text-left p-0 m-0">
-                                <small><%= av.createdAt.toDateString() %></small>
-                                <button type="button" class="btn btn-info btn-sm float-right" data-toggle="modal"
-                                    data-target="#locationModal" data-lat="<%= av.latitude %>"
-                                    data-lng="<%= av.longitude %>">
-                                    <span class="fa fa-map-marker"></span>
-                                </button>
-                            </p>
-                            <b><%= av.quantity %> <%= av.PPEType.name %>s </b> can be donated by
-                            <%= av.User ? av.User.username : 'unknown' %>
-
+                            <small>Application ID: A-<%= av.id %> </small>
+                            <h5><%= av.quantity %> <%= av.PPEType.name %>s
+                                <span class="float-right badge badge-<%=getBadgeClass(av)%>"> <%=getStatus(av) %>
+                                </span>
+                            </h5>
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+                                data-target="#locationModal" data-lat="<%= av.latitude %>"
+                                data-lng="<%= av.longitude %>">Location</button>
                         </div>
                     </div>
                     <% }); %>
 
                 </div>
             </div>
-            <div class="col-md-4 p-1">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header bg-danger">
                         <h5 class="mb-0 text-white">Requirements</h5>
@@ -71,27 +76,23 @@
 
                     <div class="card">
                         <div class="card-header" id="heading-req-<%= req.id %>">
-                            <p class="text-left p-0 m-0">
-                                <small><%= req.createdAt.toDateString() %></small>
-                                <button type="button" class="btn btn-info btn-sm float-right" data-toggle="modal"
-                                    data-target="#locationModal" data-lat="<%= req.latitude %>"
-                                    data-lng="<%= req.longitude %>">
-                                    <span class="fa fa-map-marker"></span>
-                                </button>
-                            </p>
-                            <b><%= req.quantity %> <%= req.PPEType.name %>s </b> required by
-                            <%= req.User ? req.User.username : 'unknown' %>
-
+                            <small>Application ID: R-<%= req.id %> </small>
+                            <h5><%= req.quantity %> <%= req.PPEType.name %>s
+                                <span class="float-right badge badge-<%=getBadgeClass(req)%>"> <%=getStatus(req) %> </span>
+                            </h5>
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+                                data-target="#locationModal" data-lat="<%= req.latitude %>"
+                                data-lng="<%= req.longitude %>">Location</button>
                         </div>
                     </div>
                     <% }); %>
 
                 </div>
             </div>
-            <div class="col-md-4 p-1">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header bg-primary">
-                        <h5 class="mb-0 text-white">Manufacturing/Suppliers</h5>
+                        <h5 class="mb-0 text-white">Manufacture/Supply</h5>
                     </div>
                 </div>
                 <div>
@@ -99,17 +100,13 @@
 
                     <div class="card">
                         <div class="card-header" id="heading-man-<%= man.id %>">
-                            <p class="text-left p-0 m-0">
-                                <small><%= man.createdAt.toDateString() %></small>
-                                <button type="button" class="btn btn-info btn-sm float-right" data-toggle="modal"
-                                    data-target="#locationModal" data-lat="<%= man.latitude %>"
-                                    data-lng="<%= man.longitude %>">
-                                    <span class="fa fa-map-marker"></span>
-                                </button>
-                            </p>
-                            <b><%= man.quantity %> <%= man.PPEType.name %>s </b> can be manufactured by
-                            <%= man.User ? man.User.username : 'unknown' %>
-
+                            <small>Application ID: M-<%= man.id %> </small>
+                            <h5><%= man.quantity %> <%= man.PPEType.name %>s
+                                <span class="float-right badge badge-<%=getBadgeClass(man)%>"> <%=getStatus(man) %> </span>
+                            </h5>
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+                                data-target="#locationModal" data-lat="<%= man.latitude %>"
+                                data-lng="<%= man.longitude %>">Location</button>
                         </div>
                     </div>
                     <% }); %>
