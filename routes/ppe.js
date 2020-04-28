@@ -3,7 +3,7 @@ const request = require('request')
 const { check } = require("express-validator");
 const { upload, validate, makeURI } = require('./utils');
 const webpush = require('web-push');
-const cryptoRandomString = require('crypto-random-string');
+const nanoid = require('nanoid').nanoid;
 const redis = require("redis");
 const argon2 = require('argon2');
 const nodemailer = require("nodemailer");
@@ -40,9 +40,9 @@ router.get('/map', function (req, res, next) {
 });
 // View ppe as list
 router.get('/list', async function (req, res, next) {
-  ap = models.Availability.findAll({ include: models.PPEType });
-  rp = models.Requirement.findAll({ include: models.PPEType });
-  mp = models.Manufacturing.findAll({ include: models.PPEType });
+  ap = models.Availability.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
+  rp = models.Requirement.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
+  mp = models.Manufacturing.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
   Promise.all([ap, rp, mp]).then(function (response) {
     res.render('ppe-list', { availabilities: response[0], requirements: response[1], manufacturing: response[2] });
   }).catch(e => next(e));
@@ -89,7 +89,7 @@ router.post('/',
           password: await argon2.hash(req.body.name),
           createdAt: new Date(),
           updatedAt: new Date(),
-          token: cryptoRandomString({ length: 50, type: 'url-safe' })
+          token: nanoid(50)
         }
       });
       // send mail with defined transport object
@@ -104,7 +104,7 @@ router.post('/',
           <p>Please click on this link to view your application status</p>
           <a href="${statusLink}" target="_blank">${statusLink}</a>
           `
-      }).then(()=>{
+      }).then(() => {
         console.log("Message sent: %s", info.messageId);
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
         // Preview only available when sending through an Ethereal account
@@ -114,7 +114,7 @@ router.post('/',
 
       console.log("USER: " + user.id)
       let records = [];
-      for(var i = 0; i <req.body.PPETypeId.length; i++){
+      for (var i = 0; i < req.body.PPETypeId.length; i++) {
         records.push({
           name: req.body.name,
           PPETypeId: req.body.PPETypeId[i],
@@ -127,7 +127,7 @@ router.post('/',
           UserId: user.id
         })
       }
-      
+
       request.post(
         INCOMING_WEBHOOK,
         {
@@ -144,28 +144,29 @@ router.post('/',
           console.log(body)
         }
       )
-      if (req.body.mode === 'availability') {
-        const availability = await models.Availability.bulkCreate(records);
-        // findMatches(availability, 'Availability', 'onCreate');
-        return res.render('ppe-thanks', { forId: availability.id, forType: 'Availability', statusLink: statusLink });
-      }
-      else if (req.body.mode === 'requirement') {
-        // record.canBuy = req.body.canBuy;
-        for(let r of records){
-          r.canBuy = req.body.canBuy;
+      let createdRecords;
+      switch (req.body.mode) {
+        case 'Availability': {
+          createdRecords = await models.Availability.bulkCreate(records);
+          break;
         }
-        const requirement = await models.Requirement.bulkCreate(records);
-        // findMatches(requirement, 'Requirement', 'onCreate');
-        return res.render('ppe-thanks', { forId: requirement.id, forType: 'Requirement', statusLink: statusLink });
-      }
-      else if (req.body.mode === 'manufacturing') {
-        // record.remarks = req.body.remarks;
-        for(let r of records){
-          r.remarks = req.body.remarks;
+        case 'Requirement': {
+          for (let r of records) {
+            r.canBuy = req.body.canBuy;
+          }
+          createdRecords = await models.Requirement.bulkCreate(records);
+          break;
         }
-        const manufacturing = await models.Manufacturing.bulkCreate(records);
-        return res.render('ppe-thanks', { forId: manufacturing.id, forType: 'Manufacturing', statusLink: statusLink });
-      }
+        case 'Manufacturing': {
+          for (let r of records) {
+            r.remarks = req.body.remarks;
+          }
+          createdRecords = await models.Manufacturing.bulkCreate(records);
+          break;
+        }
+      }          
+      // findMatches(requirement, 'Requirement', 'onCreate');
+      return res.render('ppe-thanks', { forId: createdRecords[0].id, forType: req.body.mode, statusLink });
     } catch (e) {
       next(e);
     }

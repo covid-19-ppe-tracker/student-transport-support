@@ -10,7 +10,7 @@
     "migrate:undo": "npx sequelize db:migrate:undo",
     "migration:create": "npx sequelize migration:create --name",
     "seed": "npx sequelize-cli db:seed:all",
-    "seed:undo": "npx sequelize-cli db:seed:undo",
+    "seed:undo": "npx sequelize-cli db:seed:undo --seed",
     "bundle": "NODE_ENV=production node bin/bundle",
     "deploy": "npm run bundle && gcloud app deploy && rm .adminbro/bundle.js"
   },
@@ -21,7 +21,6 @@
     "admin-bro-sequelizejs": "^0.4.0",
     "argon2": "^0.26.1",
     "cookie-parser": "^1.4.5",
-    "crypto-random-string": "^3.2.0",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "ejs": "^3.0.1",
