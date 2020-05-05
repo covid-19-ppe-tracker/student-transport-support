@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     longitude: DataTypes.DOUBLE,
     resolved: DataTypes.BOOLEAN,
     connected: DataTypes.BOOLEAN,
+    remarks: DataTypes.TEXT,
   }, {});
   Availability.associate = function(models) {
     // associations can be defined here

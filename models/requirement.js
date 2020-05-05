@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     canBuy: DataTypes.BOOLEAN,
     resolved: DataTypes.BOOLEAN,
     connected: DataTypes.BOOLEAN,
+    remarks: DataTypes.TEXT,
   }, {});
   Requirement.associate = function(models) {
     // associations can be defined here
