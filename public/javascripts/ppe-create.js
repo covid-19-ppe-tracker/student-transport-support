@@ -10,8 +10,6 @@ $( "input[name=mode]" ).on( "change", function() {
     $("#name_emoji").removeClass().addClass("em em-angel");
     $("#can_buy_group").addClass('d-none');
     $("#can_buy_group input").attr('disabled', true);
-    $("#remarks_group").addClass('d-none');
-    $("#remarks_group textarea").attr('disabled', true);
     break;
   case "requirement":
     $("#ppe-info-set span").text("You're in need of");
@@ -20,8 +18,6 @@ $( "input[name=mode]" ).on( "change", function() {
     $("#name_emoji").removeClass().addClass("em em-bust_in_silhouette");
     $("#can_buy_group").removeClass('d-none');
     $("#can_buy_group input").attr('disabled', false);
-    $("#remarks_group").addClass('d-none');
-    $("#remarks_group textarea").attr('disabled', true);
     break;
   case "manufacturing":
     $("#ppe-info-set span").text("You build and supply");
@@ -30,8 +26,6 @@ $( "input[name=mode]" ).on( "change", function() {
     $("#name_emoji").removeClass().addClass("em em-female-factory-worker");
     $("#can_buy_group").addClass('d-none');
     $("#can_buy_group input").attr('disabled', true);
-    $("#remarks_group").removeClass('d-none');
-    $("#remarks_group textarea").attr('disabled', false);
     break;
   }
 });

@@ -52,7 +52,8 @@
                                 </button>
                             </p>
                             <b><%= av.quantity %> <%= av.PPEType.name %>s </b> can be donated by
-                            <%= av.User ? av.User.username : 'unknown' %>
+                            <%= av.User ? av.User.username : 'unknown' %> <br>
+                            <small> <%= av.remarks %>  </small>
 
                         </div>
                     </div>
@@ -80,7 +81,8 @@
                                 </button>
                             </p>
                             <b><%= req.quantity %> <%= req.PPEType.name %>s </b> required by
-                            <%= req.User ? req.User.username : 'unknown' %>
+                            <%= req.User ? req.User.username : 'unknown' %><br>
+                            <small> <%= req.remarks %>  </small>
 
                         </div>
                     </div>
@@ -108,7 +110,8 @@
                                 </button>
                             </p>
                             <b><%= man.quantity %> <%= man.PPEType.name %>s </b> can be manufactured by
-                            <%= man.User ? man.User.username : 'unknown' %>
+                            <%= man.User ? man.User.username : 'unknown' %> <br>
+                            <small> <%= man.remarks %>  </small>
 
                         </div>
                     </div>

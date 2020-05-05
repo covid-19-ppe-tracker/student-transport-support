@@ -123,6 +123,7 @@ router.post('/',
           contact: req.body.contact,
           latitude: req.body.latitude,
           longitude: req.body.longitude,
+          remarks: req.body.remarks,
           ProofId: proof.id,
           UserId: user.id
         })
@@ -158,9 +159,6 @@ router.post('/',
           break;
         }
         case 'Manufacturing': {
-          for (let r of records) {
-            r.remarks = req.body.remarks;
-          }
           createdRecords = await models.Manufacturing.bulkCreate(records);
           break;
         }
