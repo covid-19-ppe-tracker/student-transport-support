@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head') %>
+</head>
+
+<body class=" bg-gradient">
+
+    <%- include('partials/navbar') %>
+    <!-- <div class="fab-container">
+        <a type="button" class="btn btn-danger btn-fab" href="/ppe/create">
+            <span class="fa fa-plus"></span>
+        </a>
+    </div> -->
+    <div class="container pt-2">
+        <div class="row w-100 justify-content-sm-center">
+            <div class="col-12 p-5 text-center ">
+                <div class="card shadow p-1 mb-2 bg-white rounded">
+                    <div class="card-body">
+                        <p class="card-text">All the requests and providers for support are shown in a list
+                            here.
+                        </p>
+                        <p> Click on the source and destination icons
+                            <button class="text-light btn btn-info btn-sm d-inline " disabled>
+                                <span class="fa fa-sign-out"></span>
+                            </button>&nbsp;
+                            <button class="text-light btn btn-info btn-sm d-inline " disabled>
+                                <span class="fa fa-sign-in"></span>
+                            </button>&nbsp;
+                            to view the item's location.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 p-1">
+                <div class="card">
+                    <div class="card-header bg-success">
+                        <h5 class="mb-0 text-white">Support providers</h5>
+                    </div>
+                </div>
+                <div id="accordion">
+                    <% supports.forEach(function(sup) { %>
+
+                    <div class="card">
+                        <div class="card-header" id="heading-sup-<%= sup.id %>">
+                            <p class="text-left p-0 m-0">
+                                <small><%= sup.createdAt.toDateString() %></small>
+                                <button type="button" class="btn btn-info btn-sm float-right m-1" data-toggle="modal"
+                                    data-target="#locationModal" data-lat="<%= sup.destinationLatitude %>"
+                                    data-lng="<%= sup.destinationLongitude %>">
+                                    <span class="fa fa-sign-in"></span>
+                                </button>
+                                <button type="button" class="btn btn-info btn-sm float-right m-1" data-toggle="modal"
+                                    data-target="#locationModal" data-lat="<%= sup.sourceLatitude %>"
+                                    data-lng="<%= sup.sourceLongitude %>">
+                                    <span class="fa fa-sign-out"></span>
+                                </button>
+
+                                
+                            </p>
+                            <b><%= sup.name %></b> is going from <%= sup.source.name %> to <%= sup.destination.name %>
+                                <small> <%= sup.remarks %> </small>
+
+                        </div>
+                    </div>
+                    <% }); %>
+
+                </div>
+            </div>
+            <div class="col-md-6 p-1">
+                <div class="card">
+                    <div class="card-header bg-danger">
+                        <h5 class="mb-0 text-white">Requirements</h5>
+                    </div>
+                </div>
+                <div>
+                    <% requirements.forEach(function(req) { %>
+
+                    <div class="card">
+                        <div class="card-header" id="heading-req-<%= req.id %>">
+                            <p class="text-left p-0 m-0">
+                                <small><%= req.createdAt.toDateString() %></small>
+                                <button type="button" class="btn btn-info btn-sm float-right m-1" data-toggle="modal"
+                                    data-target="#locationModal" data-lat="<%= req.destinationLatitude %>"
+                                    data-lng="<%= req.destinationLongitude %>">
+                                    <span class="fa fa-sign-in"></span>
+                                </button>
+                                <button type="button" class="btn btn-info btn-sm float-right m-1" data-toggle="modal"
+                                    data-target="#locationModal" data-lat="<%= req.sourceLatitude %>"
+                                    data-lng="<%= req.sourceLongitude %>">
+                                    <span class="fa fa-sign-out"></span>
+                                </button>
+                            </p>
+                            <b><%= req.name %></b> needs to go from <%= req.source.name %> to <%= req.destination.name %>
+                                <small> <%= req.remarks %> </small>
+
+                        </div>
+                    </div>
+                    <% }); %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="locationModalLabel">Location</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="mapid" style="height: 300px;"> </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    let mymap = L.map('mapid').setView([22, 84], 10);
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2hpbmphbiIsImEiOiJjazhiMHM2bzQwN2oyM2tvM3d3cm81dmxsIn0.cVV5b0Ey8lIQ2DcsJ5ZDmA', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1
+    }).addTo(mymap);
+    let marker = L.marker([22, 84]).addTo(mymap);
+
+    $('#locationModal').on('show.bs.modal', function (event) {
+        console.log("poof")
+        const button = $(event.relatedTarget) // Button that triggered the modal
+        const lat = button.data('lat') // Extract info from data-* attributes
+        const lng = button.data('lng') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use leaflet to update the map's point
+        marker.setLatLng(new L.LatLng(lat, lng));
+        mymap.panTo(new L.LatLng(lat, lng))
+        setTimeout(function () { mymap.invalidateSize() }, 400);
+    })
+</script>
+
+</html>

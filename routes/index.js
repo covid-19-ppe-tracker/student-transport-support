@@ -12,15 +12,15 @@ router.get('/', function (req, res, next) {
 router.get('/map', function (req, res, next) {
   res.render('ppe-map', { lat: req.query.lat || 22, lng: req.query.lng || 84, zoom: req.query.zoom || 4.5 });
 });
-// View ppe as list
+// View as list
 router.get('/list', async function (req, res, next) {
-  ap = models.Availability.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
-  rp = models.Requirement.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
-  mp = models.Manufacturing.findAll({ include: [models.PPEType, models.User], order:[['createdAt', 'DESC']] });
-  Promise.all([ap, rp, mp]).then(function (response) {
-    res.render('ppe-list', { availabilities: response[0], requirements: response[1], manufacturing: response[2] });
+  sp = models.Support.findAll({ include: [{ model: models.Location, as: 'source' }, { model: models.Location, as: 'destination' }] });
+  rp = models.Requirement.findAll({ include: [{ model: models.Location, as: 'source' }, { model: models.Location, as: 'destination' }] });
+  Promise.all([sp, rp]).then(function (response) {
+    res.render('list', { supports: response[0], requirements: response[1] });
   }).catch(e => next(e));
 });
+
 
 // View create support form
 router.get('/create/support', async function (req, res, next) {
