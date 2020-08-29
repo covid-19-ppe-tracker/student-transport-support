@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head') %>
+    <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
+</head>
+
+<body class=" bg-gradient">
+    <%- include('partials/navbar') %>
+
+    <div class="container">
+        <div class="row justify-content-md-center mt-5">
+            <div class="col-md-8 card pt-2 pb-2 ml-3 mr-3 mb-3 shadow rounded">
+                <h2 class="text-center">Provide support
+                    <i class="em em-gift_heart" aria-role="presentation"></i>
+                </h2>
+                <form method="POST" action="/ppe" enctype="multipart/form-data">
+                    <hr>
+                    <fieldset>
+                        <legend>
+                            <span>You're going from</span>
+
+                        </legend>
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label for="sourceState">State</label>
+                                <select class="form-control state-selector source-state-selector" id="sourceState"
+                                    placeholder="Select State">
+                                    <option value="null" selected disabled>Select State</option>
+
+                                </select>
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="sourceId">District</label>
+                                <select class="form-control district-selector source-district-selector" id="sourceId">
+                                </select>
+                            </div>
+                        </div>
+
+                        <legend>
+                            <small class="text-muted"> (Optional) Choose by clicking on the map</small>
+                        </legend>
+                        <div id="sourceMapId" class="choose-location"></div>
+                        <input class="form-control" id="sourceLatitude" type="hidden" name="sourceLatitude" required>
+                        <input class="form-control" id="sourceLongitude" type="hidden" name="sourceLongitude" required>
+                    </fieldset>
+                    <hr>
+
+                    <fieldset>
+                        <legend>
+                            <span>You're going to</span>
+
+                        </legend>
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label for="destinationState">State</label>
+                                <select class="form-control state-selector destination-state-selector"
+                                    id="destinationState" placeholder="Select State">
+                                    <option value="null" selected disabled>Select State</option>
+
+                                </select>
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="destinationId">District</label>
+                                <select class="form-control district-selector destination-district-selector"
+                                    id="destinationId">
+                                </select>
+                            </div>
+                        </div>
+
+                        <legend>
+                            <small class="text-muted"> (Optional) Choose by clicking on the map</small>
+                        </legend>
+                        <div id="destinationMapId" class="choose-location"></div>
+                        <input class="form-control" id="destinationLatitude" type="hidden" name="destinationLatitude"
+                            required>
+                        <input class="form-control" id="destinationLongitude" type="hidden" name="destinationLongitude"
+                            required>
+                    </fieldset>
+                    <hr>
+
+                    <fieldset>
+                        <legend>
+                            <span>Your contact details</span>
+                            <i class="em em-mega" aria-role="presentation"></i>
+                        </legend>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i id="name_emoji" class="em em-angel" aria-role="presentation"></i>
+                                    </span>
+                                </div>
+                                <input class="form-control" id="name" type="text" name="name" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="em em-e-mail" aria-role="presentation"></i>
+                                    </span>
+                                </div>
+                                <input class="form-control" id="email" type="email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Phone</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="em em-calling" aria-role="presentation"></i>
+                                    </span>
+                                    <span class="input-group-text">+91</span>
+                                </div>
+                                <input class="form-control" id="contact" type="tel" name="contact" required
+                                    minlength="10" maxlength="10" pattern="\d+">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group" id="remarks_group">
+                        <label for="remarks">Enter any remarks (for e.g. your area, how long you will need,
+                            etc.)</label>
+                        <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
+                    </div>
+
+
+
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        let locations;
+        function getLocations() {
+            $.get("/api/location", function (data, status) {
+                locations = data;
+                $(".state-selector").append(locations.filter(l => l.isLocatedIn === null).map((l) => {
+                    return `<option value="${l.id}">${l.name}</option`
+                }));
+                $(".source-state-selector").change(function (e) {
+                    const id = $(".source-state-selector option:selected").val();
+                    $(".source-district-selector").empty();
+                    $(".source-district-selector").append(locations.filter(l => l.isLocatedIn && l.isLocatedIn.id === +id).map((l) => {
+                        return `<option value="${l.id}">${l.name}</option`
+                    }));
+                })
+
+                $(".destination-state-selector").change(function (e) {
+                    const id = $(".destination-state-selector option:selected").val();
+                    $(".destination-district-selector").empty();
+                    $(".destination-district-selector").append(locations.filter(l => l.isLocatedIn && l.isLocatedIn.id === +id).map((l) => {
+                        return `<option value="${l.id}">${l.name}</option`
+                    }));
+                })
+            });
+
+
+        }
+        let sourceMap;
+        let sourceMarker;
+        let destinationMap;
+        let destinationMarker;
+
+        function getCurrentLocation(callback) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(callback);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function onSourceMapClick(e) {
+            var position = e.latlng;
+            sourceMarker.setLatLng(new L.LatLng(position.lat, position.lng));
+            sourceMap.panTo(new L.LatLng(position.lat, position.lng))
+            updateFormLocation("source", position.lat, position.lng)
+        };
+
+        function onDestinationMapClick(e) {
+            var position = e.latlng;
+            destinationMarker.setLatLng(new L.LatLng(position.lat, position.lng));
+            destinationMap.panTo(new L.LatLng(position.lat, position.lng))
+            updateFormLocation("destination", position.lat, position.lng)
+        };
+
+        function updateFormLocation(place, lat, lng) {
+            $(`input[name=${place}Latitude]`).val(lat)
+            $(`input[name=${place}Longitude]`).val(lng)
+        }
+        function displayMap(map, mapId, marker, position) {
+            map = L.map(mapId).setView([position.coords.latitude, position.coords.longitude], 15);
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2hpbmphbiIsImEiOiJjazhiMHM2bzQwN2oyM2tvM3d3cm81dmxsIn0.cVV5b0Ey8lIQ2DcsJ5ZDmA', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(map);
+            marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
+            return [map, marker];
+        }
+
+
+        $(function () {
+            getLocations();
+            getCurrentLocation((position) => {
+                [sourceMap, sourceMarker] = displayMap(sourceMap, "sourceMapId", sourceMarker, position);
+                sourceMap.on('click', onSourceMapClick);
+                updateFormLocation("source", position.coords.latitude, position.coords.longitude);
+
+                [destinationMap, destinationMarker] = displayMap(destinationMap, "destinationMapId", destinationMarker, position);
+                destinationMap.on('click', onDestinationMapClick);
+                updateFormLocation("destination", position.coords.latitude, position.coords.longitude);
+            })
+        });
+    </script>
+
+    <!-- <script src="/javascripts/ppe-create.js" async></script> -->
+</body>
+
+</html>

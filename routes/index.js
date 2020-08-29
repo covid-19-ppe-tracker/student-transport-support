@@ -23,14 +23,41 @@ router.get('/list', async function (req, res, next) {
 });
 
 // View ppe-create form
-router.get('/create', async function (req, res, next) {
+router.get('/create/support', async function (req, res, next) {
   try {
     const locations = await models.Location.findAll();
-    res.render('create', { locations: locations });
+    res.render('create-support', { locations: locations });
   } catch (e) {
     next(e);
   }
 });
+
+// Create new application for PPE
+router.post('/support', async function (req, res, next) {
+  try {
+
+    const support = await models.Support.create({
+      name: req.body.name,
+      email: req.body.email,
+      contact: req.body.contact,
+      sourceId: req.body.sourceId,
+      sourceLatitude: req.body.sourceLatitude,
+      sourceLongitude: req.body.sourceLongitude,
+
+      destinationId: req.body.destinationId,
+      destinationLatitude: req.body.destinationLatitude,
+      destinationLongitude: req.body.destinationLongitude,
+      remarks: req.body.remarks,
+      resolved: false
+    })
+
+    // findMatches(requirement, 'Requirement', 'onCreate');
+    return res.render('thanks', { forId: support.id, forType: 'Support' });
+  } catch (e) {
+    next(e);
+  }
+});
+
 
 // View contact-us information
 router.get('/contact-us', function (req, res, next) {
