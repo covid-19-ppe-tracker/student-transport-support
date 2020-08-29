@@ -62,6 +62,7 @@ typings/
 
 # Database
 *.sqlite
+proofs
 
 # Key files
 *.pem
