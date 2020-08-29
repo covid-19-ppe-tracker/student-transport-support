@@ -7,7 +7,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 var app = require('../app');
-var debug = require('debug')('covid19-ppe-tracker:server');
+var debug = require('debug')('tracksts:server');
 var http = require('http');
 var models = require("../models");
 var fs = require('fs');

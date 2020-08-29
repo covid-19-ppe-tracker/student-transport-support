@@ -6,7 +6,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var fs = require('fs');
 var pino = require('express-pino-logger')();
-const webpush = require('web-push');
+const s = require('web-push');
 const AdminBro = require('admin-bro');
 const AdminBroExpress = require('admin-bro-expressjs');
 const adminBroOptions = require('./admin/config');
@@ -45,16 +45,16 @@ const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
 })
 
 
-const vapidKeys = {
-  publicKey: fs.readFileSync("./server.pub").toString(),
-  privateKey: fs.readFileSync('./server.priv').toString()
-};
+// const vapidKeys = {
+//   publicKey: fs.readFileSync("./server.pub").toString(),
+//   privateKey: fs.readFileSync('./server.priv').toString()
+// };
 
-webpush.setVapidDetails(
-  'mailto:web-push-book@gauntface.com',
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+// s.setVapidDetails(
+//   'mailto:web-push-book@gauntface.com',
+//   vapidKeys.publicKey,
+//   vapidKeys.privateKey
+// );
 var app = express();
 let sess = {
   secret: generateSecret(),

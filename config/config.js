@@ -1,8 +1,8 @@
 module.exports = {
   development: {
-    username: process.env.DB_USERNAME || 'trackppe',
-    password: process.env.DB_PASSWORD || 'trackppe',
-    database: process.env.DB_NAME || 'trackppe',
+    username: process.env.DB_USERNAME || 'tracksts',
+    password: process.env.DB_PASSWORD || 'tracksts',
+    database: process.env.DB_NAME || 'tracksts',
     host: process.env.DB_HOST || 'localhost',
     dialect: 'postgres',
     // Use a different storage. Default: none
