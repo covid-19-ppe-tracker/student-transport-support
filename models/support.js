@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Requirement = sequelize.define('Requirement', {
+  const Support = sequelize.define('Support', {
     name: DataTypes.STRING,
     email: DataTypes.STRING,
     contact: DataTypes.STRING,
@@ -12,16 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     resolved: DataTypes.BOOLEAN,
     remarks: DataTypes.TEXT,
   }, {});
-  Requirement.associate = function(models) {
+  Support.associate = function(models) {
     // associations can be defined here
-    Requirement.belongsTo(models.Location, {
+    Support.belongsTo(models.Location, {
       as: "source",
       onDelete: "SET NULL",
       foreignKey: {
         allowNull: true
       }
     });
-    Requirement.belongsTo(models.Location, {
+    Support.belongsTo(models.Location, {
       as: "destination",
       onDelete: "SET NULL",
       foreignKey: {
@@ -29,5 +29,5 @@ module.exports = (sequelize, DataTypes) => {
       }
     });
   };
-  return Requirement;
+  return Support;
 };
