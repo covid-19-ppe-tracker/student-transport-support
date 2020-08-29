@@ -34,55 +34,55 @@ module.exports = {
       }
     }
   },
+  // {
+  //   resource: models.Proof,
+  //   options: {
+  //     actions: {
+  //       documents: {
+  //         actionType: 'record',
+  //         icon: 'View',
+  //         isVisible: true,
+  //         isAccessible: true,
+  //         handler: async (req, res, context) => {
+  //           let proof = context.record;
+  //           const DocumentResource = context._admin.findResource('Documents')
+  //           const docs = await models.Document.findAll({ where: { ProofId: proof.params.id } });
+  //           const documentRecords = await DocumentResource.findMany(docs.map(it => it.id));
+  //           proof.populate('documents', {
+  //             records: documentRecords,
+  //             toJSON: function () {
+  //               return this.records.map(it => it.toJSON());
+  //             }
+  //           });
+  //           return {
+  //             record: proof.toJSON()
+  //           }
+  //         },
+  //         component: AdminBro.bundle('./view-proof-documents.component.jsx'),
+  //       },
+  //       edit: {
+  //         before: async (req) => {
+  //           if (!req.payload.verified) {
+  //             req.payload.verified = false;
+  //           }
+  //           return req;
+  //         }
+  //       }
+  //     },
+  //   },
+  // },
   {
-    resource: models.Proof,
+    resource: models.Support,
     options: {
       actions: {
-        documents: {
-          actionType: 'record',
-          icon: 'View',
-          isVisible: true,
-          isAccessible: true,
-          handler: async (req, res, context) => {
-            let proof = context.record;
-            const DocumentResource = context._admin.findResource('Documents')
-            const docs = await models.Document.findAll({ where: { ProofId: proof.params.id } });
-            const documentRecords = await DocumentResource.findMany(docs.map(it => it.id));
-            proof.populate('documents', {
-              records: documentRecords,
-              toJSON: function () {
-                return this.records.map(it => it.toJSON());
-              }
-            });
-            return {
-              record: proof.toJSON()
-            }
-          },
-          component: AdminBro.bundle('./view-proof-documents.component.jsx'),
-        },
         edit: {
           before: async (req) => {
-            if (!req.payload.verified) {
-              req.payload.verified = false;
-            }
-            return req;
-          }
-        }
-      },
-    },
-  },
-  {
-    resource: models.Availability,
-    options: {
-      actions: {
-        edit: {
-          before: async (req) => {
-            if (!req.payload.connected) {
-              req.payload.connected = false;
-            }
-            if (!req.payload.resolved) {
-              req.payload.resolved = false;
-            }
+            // if (!req.payload.connected) {
+            //   req.payload.connected = false;
+            // }
+            // if (!req.payload.resolved) {
+            //   req.payload.resolved = false;
+            // }
             return req;
           }
         }
@@ -95,12 +95,6 @@ module.exports = {
       actions: {
         edit: {
           before: async (req) => {
-            if (!req.payload.canBuy) {
-              req.payload.canBuy = false;
-            }
-            if (!req.payload.connected) {
-              req.payload.connected = false;
-            }
             if (!req.payload.resolved) {
               req.payload.resolved = false;
             }
@@ -110,24 +104,24 @@ module.exports = {
       }
     }
   },
-  {
-    resource: models.Manufacturing,
-    options: {
-      actions: {
-        edit: {
-          before: async (req) => {
-            if (!req.payload.connected) {
-              req.payload.connected = false;
-            }
-            if (!req.payload.resolved) {
-              req.payload.resolved = false;
-            }
-            return req;
-          }
-        }
-      }
-    }
-  },
+  // {
+  //   resource: models.Manufacturing,
+  //   options: {
+  //     actions: {
+  //       edit: {
+  //         before: async (req) => {
+  //           if (!req.payload.connected) {
+  //             req.payload.connected = false;
+  //           }
+  //           if (!req.payload.resolved) {
+  //             req.payload.resolved = false;
+  //           }
+  //           return req;
+  //         }
+  //       }
+  //     }
+  //   }
+  // },
 
 
   ],
