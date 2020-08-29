@@ -26,6 +26,8 @@ An initiative by IIT Bombay.
 4. Set up:
    ```
    npm install
+   npm run migrate
+   npm run seed
    ```
 5. Run the application on http://localhost:3000
    ```

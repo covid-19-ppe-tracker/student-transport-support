@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Manufacturings', {
+    return queryInterface.createTable('Support', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,19 +12,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      PPETypeId: {
-        type: Sequelize.INTEGER,
-        onDelete: "SET NULL",
-        allowNull: true,
-        references: {
-          model: 'PPETypes',
-          key: 'id'
-        }
-      },
-      quantity: {
-        type: Sequelize.DOUBLE,
-        allowNull: false,
-      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -33,14 +20,54 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      latitude: {
+
+      source: {
+        type: Sequelize.INTEGER,
+        onDelete: "SET NULL",
+        allowNull: false,
+        references: {
+          model: 'Location',
+          key: 'id'
+        }
+      },
+      sourceLatitude: {
         type: Sequelize.DOUBLE,
         allowNull: false,
       },
-      longitude: {
+      sourceLongitude: {
         type: Sequelize.DOUBLE,
         allowNull: false,
       },
+
+      destination: {
+        type: Sequelize.INTEGER,
+        onDelete: "SET NULL",
+        allowNull: false,
+        references: {
+          model: 'Location',
+          key: 'id'
+        }
+      },
+      destinationLatitude: {
+        type: Sequelize.DOUBLE,
+        allowNull: false,
+      },
+      destinationLongitude: {
+        type: Sequelize.DOUBLE,
+        allowNull: false,
+      },
+
+
+      travelDate: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+
+      remarks: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -52,6 +79,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Manufacturings');
+    return queryInterface.dropTable('Support');
   }
 };

@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('PPETypes', {
+    return queryInterface.createTable('Location', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,6 +10,15 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING
+      },
+      isLocatedIn: {
+        type: Sequelize.INTEGER,
+        onDelete: "SET NULL",
+        allowNull: true,
+        references: {
+          model: 'Location',
+          key: 'id'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -22,6 +31,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('PPETypes');
+    return queryInterface.dropTable('Location');
   }
 };
