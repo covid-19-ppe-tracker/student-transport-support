@@ -22,7 +22,7 @@ router.get('/list', async function (req, res, next) {
   }).catch(e => next(e));
 });
 
-// View ppe-create form
+// View create support form
 router.get('/create/support', async function (req, res, next) {
   try {
     const locations = await models.Location.findAll();
@@ -32,7 +32,17 @@ router.get('/create/support', async function (req, res, next) {
   }
 });
 
-// Create new application for PPE
+// View create requirement form
+router.get('/create/requirement', async function (req, res, next) {
+  try {
+    const locations = await models.Location.findAll();
+    res.render('create-requirement', { locations: locations });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Create new application for support
 router.post('/support', async function (req, res, next) {
   try {
     console.log("Creating support")
@@ -54,12 +64,40 @@ router.post('/support', async function (req, res, next) {
     })
 
     // findMatches(requirement, 'Requirement', 'onCreate');
-    return res.render('thanks', { forId: support.id, forType: 'Support' });
+    return res.render('thanks', { forId: support.id, forType: 'support' });
   } catch (e) {
     next(e);
   }
 });
 
+
+// Create new application for requirement
+router.post('/requirement', async function (req, res, next) {
+  try {
+    console.log("Creating requirement")
+    console.log(req.body);
+    const requirement = await models.Requirement.create({
+      name: req.body.name,
+      email: req.body.email,
+      contact: req.body.contact,
+      travelDate: new Date(req.body.travelDate),
+      sourceId: req.body.sourceId,
+      sourceLatitude: req.body.sourceLatitude,
+      sourceLongitude: req.body.sourceLongitude,
+
+      destinationId: req.body.destinationId,
+      destinationLatitude: req.body.destinationLatitude,
+      destinationLongitude: req.body.destinationLongitude,
+      remarks: req.body.remarks,
+      resolved: false
+    })
+
+    // findMatches(requirement, 'Requirement', 'onCreate');
+    return res.render('thanks', { forId: requirement.id, forType: 'requirement' });
+  } catch (e) {
+    next(e);
+  }
+});
 
 // View contact-us information
 router.get('/contact-us', function (req, res, next) {
