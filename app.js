@@ -15,7 +15,7 @@ const models = require('./models');
 
 // Routes
 var indexRouter = require('./routes/index');
-var ppeRouter = require('./routes/ppe');
+// var ppeRouter = require('./routes/ppe');
 var apiRouter = require('./routes/api');
 var userRouter = require('./routes/user');
 
@@ -76,7 +76,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/ppe', ppeRouter);
+// app.use('/ppe', ppeRouter);
 app.use('/user', userRouter);
 app.use('/api', apiRouter);
 app.use('/', indexRouter);

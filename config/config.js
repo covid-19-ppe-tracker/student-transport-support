@@ -16,7 +16,7 @@ module.exports = {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    host: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`,
+    host: process.env.DB_HOST || 'localhost',
     dialect: 'postgres',
     seederStorage: 'sequelize', // or 'sequelize' to store in database
   }

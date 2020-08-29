@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 volumes:
   tracksts_postgres:
@@ -6,29 +6,41 @@ volumes:
 
 services:
   redis:
-    image: 'redis:latest'
+    image: "redis:latest"
     ports:
-      - '6379:6379'
+      - "6379:6379"
 
   postgres:
-    image: 'postgres:12-alpine'
+    image: "postgres:12-alpine"
     volumes:
-      - 'tracksts_postgres:/var/lib/postgresql/data'
+      - "tracksts_postgres:/var/lib/postgresql/data"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
-      POSTGRES_USER: 'tracksts'
-      POSTGRES_PASSWORD: 'tracksts'
-      PGDATA: '/var/lib/postgresql/data/pgdata'
-      POSTGRES_DB: 'tracksts'
+      POSTGRES_USER: "tracksts"
+      POSTGRES_PASSWORD: "tracksts"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_DB: "tracksts"
 
+  tracksts:
+    container_name: tracksts
+    build:
+      context: .
+    image: tracksts
+    environment:
+      POSTGRES_HOST: postgre
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: tracksts
+      POSTGRES_PASSWORD: tracksts
+      POSTGRES_DATABASE: tracksts
+    ports:
+      - "8080:8080"
   pgadmin:
     image: dpage/pgadmin4
     ports:
       - 5050:80
     environment:
       PGADMIN_DEFAULT_EMAIL: help@tracksts.iitb.ac.in
-      PGADMIN_DEFAULT_PASSWORD: 'tracksts'
+      PGADMIN_DEFAULT_PASSWORD: "tracksts"
     volumes:
       - tracksts_pgadmin:/var/lib/pgadmin
-
