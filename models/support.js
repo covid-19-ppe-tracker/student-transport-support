@@ -10,9 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     destinationLatitude: DataTypes.DOUBLE,
     destinationLongitude: DataTypes.DOUBLE,
     resolved: DataTypes.BOOLEAN,
+    travelDate: DataTypes.DATE,
     remarks: DataTypes.TEXT,
   }, {});
-  Support.associate = function(models) {
+  Support.associate = function (models) {
     // associations can be defined here
     Support.belongsTo(models.Location, {
       as: "source",

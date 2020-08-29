@@ -15,7 +15,7 @@
                 <h2 class="text-center">Provide support
                     <i class="em em-gift_heart" aria-role="presentation"></i>
                 </h2>
-                <form method="POST" action="/ppe" enctype="multipart/form-data">
+                <form method="POST" action="/support" >
                     <hr>
                     <fieldset>
                         <legend>
@@ -33,7 +33,7 @@
                             </div>
                             <div class="form-group col-6">
                                 <label for="sourceId">District</label>
-                                <select class="form-control district-selector source-district-selector" id="sourceId">
+                                <select class="form-control district-selector source-district-selector" id="sourceId" name="sourceId" required>
                                 </select>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                             <div class="form-group col-6">
                                 <label for="destinationId">District</label>
                                 <select class="form-control district-selector destination-district-selector"
-                                    id="destinationId">
+                                    id="destinationId" name="destinationId" required>
                                 </select>
                             </div>
                         </div>
@@ -79,7 +79,19 @@
                             required>
                     </fieldset>
                     <hr>
-
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="travelDate">Travel date</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i id="name_emoji" class="em em-calendar" aria-role="presentation"></i>
+                                    </span>
+                                </div>
+                                <input class="form-control" id="travelDate" type="date" name="travelDate" required>
+                            </div>
+                        </div>
+                          
                     <fieldset>
                         <legend>
                             <span>Your contact details</span>

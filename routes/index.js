@@ -35,11 +35,13 @@ router.get('/create/support', async function (req, res, next) {
 // Create new application for PPE
 router.post('/support', async function (req, res, next) {
   try {
-
+    console.log("Creating support")
+    console.log(req.body);
     const support = await models.Support.create({
       name: req.body.name,
       email: req.body.email,
       contact: req.body.contact,
+      travelDate: new Date(req.body.travelDate),
       sourceId: req.body.sourceId,
       sourceLatitude: req.body.sourceLatitude,
       sourceLongitude: req.body.sourceLongitude,
